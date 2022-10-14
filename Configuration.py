@@ -78,6 +78,7 @@ class StaticObstaclesConfiguration(Configuration):
         """
         # The state is going to be the (x,y) coord of the agent and the goal
         self.state = np.array(list(agent) + list(goal))
+        self.parent = None
         pass
 
     def get_vector(self) -> np.ndarray:
