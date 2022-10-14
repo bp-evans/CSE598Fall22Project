@@ -6,6 +6,13 @@ Use `Configuration` in all code references, but instantiate `StaticObstaclesConf
 """
 
 
+class Action(ABC):
+    """
+    Represents an action (either continuous or discrete)
+    """
+    pass
+
+
 class Configuration(ABC):
     """
     Abstract class that represents a game configuration. Implement child classes of this for specific games.
@@ -23,6 +30,13 @@ class Configuration(ABC):
         :return:
         """
         pass
+
+    @abstractmethod
+    def get_parent_vector(self) -> ("Configuration", Action):
+        """
+        Every configuration is the result of
+        :return:
+        """
 
     @staticmethod
     @abstractmethod
@@ -70,6 +84,16 @@ class StaticObstaclesConfiguration(Configuration):
     TODO: Implement this!
     """
 
+
+    @staticmethod
+    def obstacles() -> ["Obstacles"]:
+        """
+        Stores the obstacles, returns a list of the obstacles
+        :return:
+        """
+        # TODO: Add some obstacles
+        pass
+
     def __init__(self, agent: (float, float), goal: (float, float)):
         """
 
@@ -81,17 +105,22 @@ class StaticObstaclesConfiguration(Configuration):
         self.parent = None
         pass
 
+    def get_parent_vector(self) -> ("Configuration", Action):
+        pass
+
     def get_vector(self) -> np.ndarray:
         pass
 
     @staticmethod
     def gen_random_conf() -> "StaticObstaclesConfiguration":
+        # TODO: Implement, This should only return a VALID conf
         pass
 
     def nearest_vertex(self, vertices: "StaticObstaclesConfiguration") -> "StaticObstaclesConfiguration":
         pass
 
     def new_conf_from(self, near: "StaticObstaclesConfiguration", delta) -> "StaticObstaclesConfiguration":
+        # Should only return a VALID conf where the parent, and action are set on this conf already
         pass
 
     def take_action(self, action) -> "Configuration":
