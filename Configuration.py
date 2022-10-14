@@ -6,7 +6,7 @@ Use `Configuration` in all code references, but instantiate `StaticObstaclesConf
 """
 
 
-class Configuration:
+class Configuration(ABC):
     """
     Abstract class that represents a game configuration. Implement child classes of this for specific games.
     Intuition for these methods comes from: https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
@@ -46,8 +46,18 @@ class Configuration:
     def new_conf_from(self, near: "Configuration", delta) -> "Configuration":
         """
         Returns a new configuration object that is delta away from "near" conf _towards_ this conf.
+        Would also probably need to store the parent and action associated to get this.
         :param near:
         :param delta:
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def take_action(self, action) -> "Configuration":
+        """
+        Returns a new configuration that is obtained from taking the specified action from this conf.
+        :param action:
         :return:
         """
         pass
@@ -81,4 +91,7 @@ class StaticObstaclesConfiguration(Configuration):
         pass
 
     def new_conf_from(self, near: "StaticObstaclesConfiguration", delta) -> "StaticObstaclesConfiguration":
+        pass
+
+    def take_action(self, action) -> "Configuration":
         pass
