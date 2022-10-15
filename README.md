@@ -6,3 +6,6 @@ https://www.youtube.com/watch?v=TzfNzqjJ2VQ
 
 With matplolib:
 https://github.com/riley-knox/RRT
+
+
+Some code is taken from Berkely Pacman AI agents: ai.berkely.edu
