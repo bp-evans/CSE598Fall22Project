@@ -55,7 +55,7 @@ class RRT_Core:
             if(not self.is_valid(x,y)):
                 isValid = False
             
-        ret_config = StaticObstaclesConfiguration((x,y), g)
+        ret_config = StaticObstaclesConfiguration((x,y), (g.state[0], g.state[1]))
         print("Valid")
         return ret_config
 
@@ -94,8 +94,8 @@ class RRT_Core:
                   int(nnear.state[1] + dmax * math.sin(theta)))
                   '''
         (x,y) = self.crossObstacle(nnear.state[0], x, nnear.state[1], y)
-        new_config = StaticObstaclesConfiguration((x,y), self.goal)
-        if(abs(self.goal[0] - x) < 20 and abs(self.goal[1] - y) < 20):
+        new_config = StaticObstaclesConfiguration((x,y), (self.goal.state[0], self.goal.state[1]))
+        if(abs(self.goal.state[0] - x) < 20 and abs(self.goal.state[1] - y) < 20):
             self.reachedGoal = True
         return new_config
 

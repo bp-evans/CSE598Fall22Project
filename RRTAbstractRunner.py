@@ -10,8 +10,8 @@ def main():
     obsnum = 12
     maph,mapw = dimensions
 
-    goal = (700, 350)
-    start = (50, 50)
+    goal = (650, 200)
+    start = (50, 100)
 
     pygame.init()
     map = pygame.display.set_mode((mapw, maph)) # setting up pygame window of peoper dimensions
@@ -61,8 +61,9 @@ def main():
     print("starting configs")
     # Starting configuration
     start_config = StaticObstaclesConfiguration(start, goal)
+    end_config = StaticObstaclesConfiguration(goal, goal)
     print(start_config.state)
-    core = RRTAbstract.RRT_Core([], obstacles, start_config, goal, 800, 500) # Empty start tree (BC not yet implemented)
+    core = RRTAbstract.RRT_Core([], obstacles, start_config, end_config, 800, 500) # Empty start tree (BC not yet implemented)
     graph = []
     graph, path_to_goal, found_goal = core.RRTAlg(1000)
     for g in graph:
