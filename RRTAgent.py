@@ -78,7 +78,7 @@ class BCRRTAgent(Agent):
     def __init__(self, policy):
         self.policy = policy
 
-    def get_action(self, conf: Configuration) -> Action:
+    def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
         # TODO: Rollout BC policy,
 
         seed_tree = self.policy.rollout(conf)

@@ -30,7 +30,7 @@ class KeyboardAgent(Agent):
         # self.index = index
         # self.keys = []
 
-    def get_action(self, conf: Configuration) -> DiscreteDirectionAction:
+    def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> DiscreteDirectionAction:
         # from graphicsUtils import keys_waiting
         # from graphicsUtils import keys_pressed
         # keys = list(keys_waiting()) + list(keys_pressed())
