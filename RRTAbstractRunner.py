@@ -64,7 +64,7 @@ def main():
     print(start_config.state)
     core = RRTAbstract.RRT_Core([], obstacles, start_config, goal, 800, 500) # Empty start tree (BC not yet implemented)
     graph = []
-    graph, path_to_goal, found_goal = core.RRTAlg(500)
+    graph, path_to_goal, found_goal = core.RRTAlg(1000)
     for g in graph:
         print(g.state)
         pygame.draw.circle(map, blue, (g.state[0], g.state[1]), 2, 0)
