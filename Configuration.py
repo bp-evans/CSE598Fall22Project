@@ -188,7 +188,7 @@ class StaticObstaclesConfiguration(Configuration):
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal
-        return np.linalg.norm(self.goal - self.agent) < 20
+        return np.linalg.norm(self.goal - self.agent) < 30
 
     def dist_to_terminal(self) -> numbers.Real:
         return np.linalg.norm(self.goal - self.agent)

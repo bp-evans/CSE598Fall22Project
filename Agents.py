@@ -9,9 +9,10 @@ class Agent(ABC):
     """
 
     @abstractmethod
-    def get_action(self, conf: Configuration) -> Action:
+    def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
         """
         Gives the agent a configuration and the agent returns an action to perform
+        :param display_map: A map to visualize decision making on, else None
         :param conf:
         :return:
         """

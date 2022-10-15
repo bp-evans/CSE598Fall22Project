@@ -53,8 +53,11 @@ def main():
                         if event.type == pygame.KEYDOWN and event.key == pygame.K_n:
                             waiting = False
 
+        def rrt_terminated(self, found_terminal: bool):
+            print("RRT algo terminated after " + str(self.i) + " expansions. Found terminal: " + str(found_terminal))
+
     observer = Observer(interactive=False)
-    graph, path_to_goal = core.RRTAlg(3000, observer)
+    graph, path_to_goal = core.RRTAlg(2000, observer)
 
     start_config.visualize(map)
 

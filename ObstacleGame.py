@@ -49,10 +49,12 @@ class ObstacleGame:
             if visual:
                 print("Visualizing game state")
                 conf.visualize(self.display_map)
+                pygame.event.pump()
 
             # Query the agent for an action
             print("Requesting action")
-            action = self.agent.get_action(conf)
+            action = self.agent.get_action(conf, self.display_map if visual else None)
+
 
             if self.demo:
                 demonstration.append((conf, action))

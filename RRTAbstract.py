@@ -1,11 +1,17 @@
 from Configuration import Configuration, Action
 from typing import List, Tuple, Optional
+from abc import abstractmethod
 
 class RRTObserver:
     """
     An observer object that can receive updates about an RRT algo's progression.
     """
+    @abstractmethod
     def rrt_expanded(self, vertices: List[Configuration], rand: Configuration, near: Configuration, nnext: Configuration):
+        pass
+
+    @abstractmethod
+    def rrt_terminated(self, found_terminal: bool):
         pass
 
 class RRT_Core:
@@ -45,6 +51,8 @@ class RRT_Core:
                     path.append(node.get_parent_vector())
                     node = node.get_parent_vector()[0]
 
+                observer.rrt_terminated(True)
                 return self.G, list(path[::-1])
 
+        observer.rrt_terminated(False)
         return self.G, None

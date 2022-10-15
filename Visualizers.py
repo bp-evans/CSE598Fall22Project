@@ -29,7 +29,7 @@ def visualize_conf(display_map: Union[pygame.Surface, pygame.SurfaceType], agent
 
     display_map.fill((255, 255, 255))
 
-    print("Drawing objects")
+    # print("Drawing objects")
 
     pygame.draw.circle(display_map, green, agent, nodeRad + 5, 0)
     pygame.draw.circle(display_map, green, goal, nodeRad + 20, 1)
