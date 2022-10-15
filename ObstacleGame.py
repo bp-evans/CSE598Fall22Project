@@ -21,7 +21,6 @@ class ObstacleGame:
         self.agent = agent
 
         dimensions = (500, 800)
-        obsnum = 12
         maph, mapw = dimensions
 
         StaticObstaclesConfiguration.mapw = mapw
