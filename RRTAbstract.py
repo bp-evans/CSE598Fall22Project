@@ -81,8 +81,18 @@ class RRT_Core:
     def new_conf_from(self, nrand, nnear, dmax):
         (px, py) = (nrand.state[0] - nnear.state[0], nrand.state[1] - nnear.state[1])
         theta = math.atan2(py, px)
+        if (theta <= 2.35619 and theta >= 0.785398):
+            (x,y) = nnear.state[0] + 0, nnear.state[1] + dmax # move up
+        elif (theta <= 0.785398 and theta >= -0.785398):
+            (x,y) = nnear.state[0] + dmax, nnear.state[1] # move right
+        elif (theta <= -0.785398 and theta >= -2.35619):
+            (x,y) = nnear.state[0], nnear.state[1] - dmax # move down
+        else:
+            (x,y) = nnear.state[0] - dmax, nnear.state[1] # move left
+        '''
         (x, y) = (int(nnear.state[0] + dmax * math.cos(theta)),
                   int(nnear.state[1] + dmax * math.sin(theta)))
+                  '''
         (x,y) = self.crossObstacle(nnear.state[0], x, nnear.state[1], y)
         new_config = StaticObstaclesConfiguration((x,y), self.goal)
         if(abs(self.goal[0] - x) < 20 and abs(self.goal[1] - y) < 20):
