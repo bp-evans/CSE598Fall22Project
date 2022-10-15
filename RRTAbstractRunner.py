@@ -8,8 +8,12 @@ from Visualizers import draw_graph_and_path
 
 
 def main():
+    """
+    This is to run the RRT algorithm for testing purposes. Note that this file will not be used when running the RRT algo
+    for a game Agent.
+    :return:
+    """
     dimensions = (500, 800)
-    obsnum = 12
     maph, mapw = dimensions
 
     goal = (650, 200)
@@ -56,23 +60,8 @@ def main():
 
     draw_graph_and_path(map, graph, path_to_goal)
 
-    # for g in graph:
-    #     print(g.state)
-    #     pygame.draw.circle(map, blue, (g.state[0], g.state[1]), 2, 0)
-    #     if g != start_config:
-    #         pygame.draw.line(map, blue, (g.state[0], g.state[1]), (g.parent.state[0], g.parent.state[1]),
-    #                     1)
-    #     pygame.display.update()
-    # if(found_goal):
-    #     print("Goal found!")
-    #     for p in path_to_goal:
-    #         pygame.draw.circle(map, red, (p.state[0], p.state[1]), 2, 0)
-    #         pygame.display.update()
-
     pygame.display.update()
     pygame.display.flip()
-    # pygame.event.clear()
-    # pygame.event.wait(0)
     running = True
     while running:
         for event in pygame.event.get():
