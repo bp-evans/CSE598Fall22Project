@@ -1,3 +1,4 @@
+from unittest.mock import MagicProxy
 import numpy as np
 from abc import ABC, abstractmethod
 
@@ -103,6 +104,7 @@ class StaticObstaclesConfiguration(Configuration):
         # The state is going to be the (x,y) coord of the agent and the goal
         self.state = np.array(list(agent) + list(goal))
         self.parent = None
+        # passing in obstacles from the abstract runner
         pass
 
     def get_parent_vector(self) -> ("Configuration", Action):
@@ -112,9 +114,11 @@ class StaticObstaclesConfiguration(Configuration):
         pass
 
     @staticmethod
-    def gen_random_conf() -> "StaticObstaclesConfiguration":
+    def gen_random_conf(self) -> "StaticObstaclesConfiguration":
         # TODO: Implement, This should only return a VALID conf
         pass
+
+
 
     def nearest_vertex(self, vertices: "StaticObstaclesConfiguration") -> "StaticObstaclesConfiguration":
         pass

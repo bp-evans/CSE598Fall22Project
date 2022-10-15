@@ -28,6 +28,7 @@ def main():
     obstacles = []
 
     # Static obstacles
+    
     rect1 = pygame.Rect(100, 0, 30, 200)
     pygame.draw.rect(map, grey, rect1)
     obstacles.append(rect1)
@@ -55,24 +56,41 @@ def main():
     rect9 = pygame.Rect(650, 70, 30, 30)
     pygame.draw.rect(map, grey, rect9)
     obstacles.append(rect9)
+    
 
+    print("starting configs")
     # Starting configuration
     start_config = StaticObstaclesConfiguration(start, goal)
-    core = RRTAbstract.RRT_Core([]) # Empty start tree (BC not yet implemented)
-    
+    print(start_config.state)
+    core = RRTAbstract.RRT_Core([], obstacles, start_config, goal, 800, 500) # Empty start tree (BC not yet implemented)
+    graph = []
+    graph, path_to_goal, found_goal = core.RRTAlg(500)
+    for g in graph:
+        print(g.state)
+        pygame.draw.circle(map, blue, (g.state[0], g.state[1]), 2, 0)
+        if g != start_config:
+            pygame.draw.line(map, blue, (g.state[0], g.state[1]), (g.parent.state[0], g.parent.state[1]),
+                        1)
+        pygame.display.update()
+    if(found_goal):
+        print("Goal found!")
+        for p in path_to_goal:
+            pygame.draw.circle(map, red, (p.state[0], p.state[1]), 2, 0)
+            pygame.display.update()
+
+
+
 
 
     pygame.display.update()
-    pygame.event.clear()
-    pygame.event.wait(0)
-   
-if __name__ == '__main__':
-    result=False
-    while not result:
-        try:
-            main()
-            result=True
-        except:
-            result=False
+    pygame.display.flip()
+    #pygame.event.clear()
+    #pygame.event.wait(0)
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
+main()
 
