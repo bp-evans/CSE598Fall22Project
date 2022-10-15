@@ -170,7 +170,7 @@ class StaticObstaclesConfiguration(Configuration):
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal
-        return np.linalg.norm(self.goal - self.agent) < 1
+        return np.linalg.norm(self.goal - self.agent) < 5
 
     def get_parent_vector(self) -> ("StaticObstaclesConfiguration", DiscreteDirectionAction):
         # TODO: Implement

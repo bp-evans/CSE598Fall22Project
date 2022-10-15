@@ -56,7 +56,7 @@ class ObstacleGame:
             print("Updating game based on action: " + str(action))
             conf = conf.take_action(action)
 
-            time.sleep(0.1)
+            time.sleep(0.05)
             pass
 
         # Show the result,
