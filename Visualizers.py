@@ -1,7 +1,8 @@
-import numpy as np
-import pygame
-from typing import Union
+import numbers
 
+# from Configuration import StaticObstaclesConfiguration
+import pygame
+from typing import Union, List, Tuple, Any, Optional
 
 # Colors (defining colors for pygame)
 grey = (70, 70, 70)
@@ -9,12 +10,13 @@ blue = (0, 0, 255)
 green = (0, 255, 0)
 red = (255, 0, 0)
 white = (255, 255, 255)
-nodeRad = 2 # radius of nodes on screen
+purple = (255, 0, 255)
+nodeRad = 2  # radius of nodes on screen
 nodeThickness = 0
-edgeThickness = 1 # thickness of edge or line between nodes when displayed
+edgeThickness = 1  # thickness of edge or line between nodes when displayed
 
 
-def visualize_conf(display_map: Union[pygame.Surface,pygame.SurfaceType], agent: (float, float), goal: (float, float),
+def visualize_conf(display_map: Union[pygame.Surface, pygame.SurfaceType], agent: (float, float), goal: (float, float),
                    obstacles: [(float, float, float, float)]):
     """
     Visualize these objects on the specified map
@@ -37,3 +39,25 @@ def visualize_conf(display_map: Union[pygame.Surface,pygame.SurfaceType], agent:
 
     pygame.display.update()
     pass
+
+
+def draw_graph_and_path(display_map, vertices: List["StaticObstaclesConfiguration"],
+                        path: Optional[List[Tuple["StaticObstaclesConfiguration", Any]]]):
+    """
+    Draws a graph and a path on that graph
+    :param vertices:
+    :param path:
+    :return:
+    """
+    for v in vertices:
+        pygame.draw.circle(display_map, blue, v.agent, 2, 0)
+
+        if v.parent_vector is not None:
+            # Draw the parent vector
+            pygame.draw.line(display_map, blue, v.agent, v.parent_vector[0].agent, 1)
+
+    if path is not None:
+        for p in path:
+            pygame.draw.circle(display_map, red, p[0].agent, 2, 0)
+
+    pygame.display.update()

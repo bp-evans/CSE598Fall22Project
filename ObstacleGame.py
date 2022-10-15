@@ -24,6 +24,9 @@ class ObstacleGame:
         obsnum = 12
         maph, mapw = dimensions
 
+        StaticObstaclesConfiguration.mapw = mapw
+        StaticObstaclesConfiguration.maph = maph
+
         self.display_map = pygame.display.set_mode((mapw, maph))  # setting up pygame window of proper dimensions
 
         pass

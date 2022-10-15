@@ -1,141 +1,168 @@
-from Configuration import StaticObstaclesConfiguration
+from Configuration import Configuration, Action
 import random
-import math
+import numpy as np
+from typing import List, Tuple, Optional
+import Visualizers
+import pygame
 
-class RRT_Core:
-    def __init__(self, seed_tree, obstacles, start, goal, mapw, maph):
-        self.G = seed_tree # Start off our RRT tree with the seed tree, I'm leaving this data structure undefined for now,
-        # maybe we would like it to be a heap? or maybe a just a flat list? unsure which would be most performant right now,
-        # or maybe it's just a Conf with children, but currently Conf doesn't store children so...
-        self.obstacles = obstacles
-        self.goal = goal
-        self.start = start
-        self.mapw = mapw
-        self.reachedGoal = False
-        self.maph = maph
-        self.path_to_goal = []
+class RRTObserver:
+    def rrt_expanded(self, vertices: List[Configuration], rand: Configuration, near: Configuration, nnext: Configuration):
         pass
 
-    def add_node(self, n_next):
-        self.G.append(n_next)
+class RRT_Core:
+    def __init__(self, seed_tree):
+                 # , obstacles, start, goal, mapw, maph):
+        self.G: List[Configuration] = seed_tree
+        # Start off our RRT tree with the seed tree, I'm leaving this data structure undefined for now,
+        # maybe we would like it to be a heap? or maybe a just a flat list? unsure which would be most performant right now,
+        # or maybe it's just a Conf with children, but currently Conf doesn't store children so...
+        # self.obstacles = obstacles
+        # self.goal = goal
+        # self.start = start
+        # self.mapw = mapw
+        # self.reachedGoal = False
+        # self.maph = maph
+        # self.path_to_goal = []
+        pass
 
-    def add_edge(self, nnext, nnear):
-        nnext.parent = nnear
-        return nnext
+    def RRTAlg(self, k: int, observer: RRTObserver) -> Tuple[List[Configuration], Optional[List[Tuple[Configuration, Action]]]]:
+        """
 
-    def crossObstacle(self, x1, x2, y1, y2): # move incrementally in a straight line between two nodes (x1,y1) and (x2,y2) to see if a object blocks a potential edge between them
-        obs = self.obstacles
-        prev_x, prev_y = x1, y1
-        for rectang in obs:
-            for i in range(0, 101):
-                u = i / 100
-                x = x1 * u + x2 * (1 - u)
-                y = y1 * u + y2 * (1 - u)
-                if rectang.collidepoint(x, y):
-                    return (prev_x, prev_y)
-                prev_x, prev_y = x, y
-        return x2, y2
-
-    def is_valid(self, x, y):
-        if (x <= 0 or y >= self.maph or y <=0 or x >= self.mapw):
-            return False
-        for o in self.obstacles:
-            if(o.collidepoint(x,y)):
-                return False
-        return True
-
-    def gen_random_conf(self, obstacles, goal):
-        obs = obstacles # copy the obstacles list
-        g = goal
-        isValid = False
-        while(not isValid):
-            x = int(random.uniform(0, self.mapw))
-            y = int(random.uniform(0, self.maph))
-            isValid = True
-            if(not self.is_valid(x,y)):
-                isValid = False
-            
-        ret_config = StaticObstaclesConfiguration((x,y), (g.state[0], g.state[1]))
-        print("Valid")
-        return ret_config
-
-    def distance(self, x1, y1, x2, y2): # calculate the euclidean distance between 2 nodes and return
-        px = (float(x1) - float(x2)) ** 2
-        py = (float(y1) - float(y2)) ** 2
-        return (px + py) ** (0.5)
-
-    def nearest_vertex(self, graph, nrand):
-        dmin = 999
-        near = nrand;
-        for node in graph:
-            x1 = node.state[0]
-            y1 = node.state[1]
-            x2 = nrand.state[0]
-            y2 = nrand.state[1]
-            dist = abs(self.distance(x1,y1,x2,y2))
-            if (dist < dmin):
-                near = node
-                dmin = dist
-        return near
-
-    def new_conf_from(self, nrand, nnear, dmax):
-        (px, py) = (nrand.state[0] - nnear.state[0], nrand.state[1] - nnear.state[1])
-        theta = math.atan2(py, px)
-        if (theta <= 2.35619 and theta >= 0.785398):
-            (x,y) = nnear.state[0] + 0, nnear.state[1] + dmax # move up
-        elif (theta <= 0.785398 and theta >= -0.785398):
-            (x,y) = nnear.state[0] + dmax, nnear.state[1] # move right
-        elif (theta <= -0.785398 and theta >= -2.35619):
-            (x,y) = nnear.state[0], nnear.state[1] - dmax # move down
-        else:
-            (x,y) = nnear.state[0] - dmax, nnear.state[1] # move left
-        '''
-        (x, y) = (int(nnear.state[0] + dmax * math.cos(theta)),
-                  int(nnear.state[1] + dmax * math.sin(theta)))
-                  '''
-        (x,y) = self.crossObstacle(nnear.state[0], x, nnear.state[1], y)
-        new_config = StaticObstaclesConfiguration((x,y), (self.goal.state[0], self.goal.state[1]))
-        if(abs(self.goal.state[0] - x) < 20 and abs(self.goal.state[1] - y) < 20):
-            self.reachedGoal = True
-        return new_config
-
-    def goal_reached(self):
-        curr_node = self.G[len(self.G)-1]
-        while(curr_node != self.start):
-            self.path_to_goal.insert(0, curr_node)
-            curr_node = curr_node.parent
-
-
-
-    def RRTAlg(self, k: int, dmax=30):  # -> Graph/Tree
-        self.G.append(self.start)
+        :param visualize:
+        :param k:
+        :return: 2-Tuple of 1. The entire RRT graph (vertices) and 2. an ordered list of state action pairs that start at the start
+        and end at the goal
+        """
+        conf_type = type(self.G[0])
         for i in range(k):
-            # TODO: Change to extract Configuration type from self.G
-            # For example, type = type(self.G.anyNode)
-            #conf_type = StaticObstaclesConfiguration((0.0,0.0),self.goal,0,0) # PLACEHOLDER
-            print('Gen nrand')
-            n_rand = self.gen_random_conf(self.obstacles, self.goal)  # This will be a valid random conf (passing obstacles to check for collisions)
-            print('Gen nnear')
-            n_near = self.nearest_vertex(self.G, n_rand) # Make sure the input type agrees, change Configuration if you want
-            print("END RRT LOOP")
-            n_next = self.new_conf_from(n_rand, n_near, dmax)
-            if(self.is_valid(n_next.state[0], n_next.state[1])):
-                n_next = self.add_edge(n_next, n_near)
-                self.add_node(n_next)
-                if(self.reachedGoal == True):
-                    self.goal_reached()
-                    return  self.G, self.path_to_goal, True
-            #self.add_edge(n_next, n_near) # Adding edge will be dedicated to adding that parent of n_near to n_next
-            
+
+            valid_expansion = False
+            while not valid_expansion:
+                n_rand = conf_type.gen_random_conf() # This will be a valid random conf (passing obstacles to check for collisions)
+                n_near = n_rand.nearest_vertex(self.G)
+                n_next = n_rand.new_conf_from(n_near)
+                valid_expansion = n_next is not None
+
+            observer.rrt_expanded(self.G, n_rand, n_near, n_next)
+
+            self.G.append(n_next)
+
+            if n_next.is_terminal():
+                # We reached the goal, roll back a path
+                path = []
+                node = n_next
+                while node.get_parent_vector() is not None:
+                    path.append(node.get_parent_vector())
+                    node = node.get_parent_vector()[0]
+
+                return self.G, list(path[::-1])
+
+        return self.G, None
+
+            # if (self.is_valid(n_next.state[0], n_next.state[1])):
+            #     n_next = self.add_edge(n_next, n_near)
+            #     self.add_node(n_next)
+            #     if (self.reachedGoal == True):
+            #         self.goal_reached()
+            #         return self.G, self.path_to_goal, True
+            # self.add_edge(n_next, n_near) # Adding edge will be dedicated to adding that parent of n_near to n_next
 
             # if (self.check_valid_state(n_rand)):
             #     n_near = static_config.nearest_vertex(n_rand)
             #     n_next = static_config.new_conf_from(n_rand, n_near, dmax)
             #     self.G.add_vertex(n_next)
             #     self.G.add_edge(n_next)
-         
-        return self.G, self.path_to_goal, False  # Some layer above this will visualize the final graph
 
+        # return self.G, self.path_to_goal, False  # Some layer above this will visualize the final graph
+
+    # def add_node(self, n_next):
+    #     self.G.append(n_next)
+
+    # def add_edge(self, nnext, nnear):
+    #     nnext.parent = nnear
+    #     return nnext
+
+    # def crossObstacle(self, x1, x2, y1, y2): # move incrementally in a straight line between two nodes (x1,y1) and (x2,y2) to see if a object blocks a potential edge between them
+    #     obs = self.obstacles
+    #     prev_x, prev_y = x1, y1
+    #     for rectang in obs:
+    #         for i in range(0, 101):
+    #             u = i / 100
+    #             x = x1 * u + x2 * (1 - u)
+    #             y = y1 * u + y2 * (1 - u)
+    #             if rectang.collidepoint(x, y):
+    #                 return (prev_x, prev_y)
+    #             prev_x, prev_y = x, y
+    #     return x2, y2
+
+    # def is_valid(self, x, y):
+    #     if (x <= 0 or y >= self.maph or y <=0 or x >= self.mapw):
+    #         return False
+    #     for o in self.obstacles:
+    #         if(o.collidepoint(x,y)):
+    #             return False
+    #     return True
+
+    # def gen_random_conf(self, obstacles, goal):
+    #     obs = obstacles # copy the obstacles list
+    #     g = goal
+    #     isValid = False
+    #     while(not isValid):
+    #         x = int(random.uniform(0, self.mapw))
+    #         y = int(random.uniform(0, self.maph))
+    #         isValid = True
+    #         if(not self.is_valid(x,y)):
+    #             isValid = False
+    #
+    #     ret_config = StaticObstaclesConfiguration((x,y), (g.state[0], g.state[1]))
+    #     print("Valid")
+    #     return ret_config
+
+    # def distance(self, x1, y1, x2, y2): # calculate the euclidean distance between 2 nodes and return
+    #     px = (float(x1) - float(x2)) ** 2
+    #     py = (float(y1) - float(y2)) ** 2
+    #     return (px + py) ** (0.5)
+
+    # def nearest_vertex(self, graph, nrand):
+    #     dmin = 999
+    #     near = nrand;
+    #     for node in graph:
+    #         x1 = node.state[0]
+    #         y1 = node.state[1]
+    #         x2 = nrand.state[0]
+    #         y2 = nrand.state[1]
+    #         dist = abs(self.distance(x1,y1,x2,y2))
+    #         if (dist < dmin):
+    #             near = node
+    #             dmin = dist
+    #     return near
+
+    # def new_conf_from(self, nrand, nnear, dmax):
+        # (px, py) = (nrand.state[0] - nnear.state[0], nrand.state[1] - nnear.state[1])
+        # theta = math.atan2(py, px)
+        # if (theta <= 2.35619 and theta >= 0.785398):
+        #     (x,y) = nnear.state[0] + 0, nnear.state[1] + dmax # move up
+        # elif (theta <= 0.785398 and theta >= -0.785398):
+        #     (x,y) = nnear.state[0] + dmax, nnear.state[1] # move right
+        # elif (theta <= -0.785398 and theta >= -2.35619):
+        #     (x,y) = nnear.state[0], nnear.state[1] - dmax # move down
+        # else:
+        #     (x,y) = nnear.state[0] - dmax, nnear.state[1] # move left
+        # '''
+        # (x, y) = (int(nnear.state[0] + dmax * math.cos(theta)),
+        #           int(nnear.state[1] + dmax * math.sin(theta)))
+        #           '''
+        # (x,y) = self.crossObstacle(nnear.state[0], x, nnear.state[1], y)
+        # new_config = StaticObstaclesConfiguration((x,y), (self.goal.state[0], self.goal.state[1]))
+        # if(abs(self.goal.state[0] - x) < 20 and abs(self.goal.state[1] - y) < 20):
+        #     self.reachedGoal = True
+        # return new_config
+
+    # def goal_reached(self):
+    #     curr_node = self.G[len(self.G)-1]
+    #     while(curr_node != self.start):
+    #         self.path_to_goal.insert(0, curr_node)
+    #         curr_node = curr_node.parent
 
 class BCRRT:
     """

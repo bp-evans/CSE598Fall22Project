@@ -1,8 +1,12 @@
-from unittest.mock import MagicProxy
+import math
+
 import numpy as np
 from abc import ABC, abstractmethod
 from enum import Enum
-from Util import euclidean_distance
+
+import pygame
+
+from typing import List, Optional, Tuple
 from Visualizers import visualize_conf
 
 """
@@ -116,15 +120,15 @@ class DiscreteDirectionAction(Action, Enum):
 
     def direction_vector(self) -> np.ndarray:
         if self == DiscreteDirectionAction.NORTH:
-            return np.array([0,-1])
+            return np.array([0, -1])
         elif self == DiscreteDirectionAction.SOUTH:
-            return np.array([0,1])
+            return np.array([0, 1])
         elif self == DiscreteDirectionAction.EAST:
-            return np.array([1,0])
+            return np.array([1, 0])
         elif self == DiscreteDirectionAction.WEST:
-            return np.array([-1,0])
+            return np.array([-1, 0])
         else:
-            return np.array([0,0])
+            return np.array([0, 0])
 
 
 class StaticObstaclesConfiguration(Configuration):
@@ -133,6 +137,9 @@ class StaticObstaclesConfiguration(Configuration):
 
     TODO: Implement this!
     """
+
+    mapw = 800
+    maph = 500
 
     @staticmethod
     def obstacles() -> ["Obstacles"]:
@@ -160,45 +167,100 @@ class StaticObstaclesConfiguration(Configuration):
         # The state is going to be the (x,y) coord of the agent and the goal
         self.agent = np.array(list(agent))
         self.goal = np.array(list(goal))
-        self.parent = None
+        self.parent_vector = None
         # passing in obstacles from the abstract runner
         pass
 
     def get_legal_actions(self) -> [DiscreteDirectionAction]:
         # Let all actions be valid
-        return [DiscreteDirectionAction(i) for i in range(1,5)]
+        return [DiscreteDirectionAction(i) for i in range(1, 5)]
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal
-        return np.linalg.norm(self.goal - self.agent) < 5
+        return np.linalg.norm(self.goal - self.agent) < 30
 
-    def get_parent_vector(self) -> ("StaticObstaclesConfiguration", DiscreteDirectionAction):
-        # TODO: Implement
-        pass
+    def get_parent_vector(self) -> Optional[Tuple["StaticObstaclesConfiguration", DiscreteDirectionAction]]:
+        return self.parent_vector
 
     def as_vector(self) -> np.ndarray:
         # Return this state encoded as a vector
         return np.append(self.agent, self.goal)
 
     @staticmethod
-    def gen_random_conf(self) -> "StaticObstaclesConfiguration":
+    def gen_random_conf() -> "StaticObstaclesConfiguration":
         # TODO: Implement, This should only return a VALID conf
-        pass
 
+        is_valid = False
+        while (not is_valid):
+            x = np.random.uniform(0, StaticObstaclesConfiguration.mapw)
+            y = np.random.uniform(0, StaticObstaclesConfiguration.maph)
+            # x = int(random.uniform(0, StaticObstaclesConfiguration.mapw))
+            # y = int(random.uniform(0, StaticObstaclesConfiguration.maph))
+            is_valid = True
+            # Check if this new conf collides with any obstacles
+            for obstacle in StaticObstaclesConfiguration.obstacles():
+                if pygame.Rect(obstacle).collidepoint(x, y):
+                    is_valid = False
 
+        ret_config = StaticObstaclesConfiguration((x, y), (0, 0))  # Goal is weird, but doesn't really matter
+        return ret_config
 
-    def nearest_vertex(self, vertices: "StaticObstaclesConfiguration") -> "StaticObstaclesConfiguration":
-        # TODO: Implement
-        pass
+    def nearest_vertex(self, vertices: List["StaticObstaclesConfiguration"]) -> "StaticObstaclesConfiguration":
+        dmin = 999
+        near = None
+        for vertex in vertices:
+            dist = np.linalg.norm(self.agent - vertex.agent)
+            if dist < dmin:
+                near = vertex
+                dmin = dist
+        return near
 
-    def new_conf_from(self, near: "StaticObstaclesConfiguration", delta) -> "StaticObstaclesConfiguration":
-        # TODO: Implement, Should only return a VALID conf where the parent, and action are set on this conf already
-        pass
+    def new_conf_from(self, near: "StaticObstaclesConfiguration") -> Optional["StaticObstaclesConfiguration"]:
+        # Should only return a VALID conf where the parent, and action are set on this conf already
+        diff = self.agent - near.agent
+        theta = math.atan2(diff[1], diff[0])
 
-    def take_action(self, action: DiscreteDirectionAction) -> "StaticObstaclesConfiguration":
+        if 3/4 * math.pi >= theta >= math.pi / 4:
+            # Move south
+            action = DiscreteDirectionAction.SOUTH
+        elif math.pi / 4 >= theta >= -1 * math.pi / 4:
+            # Move east
+            action = DiscreteDirectionAction.EAST
+        elif -1 * math.pi / 4 >= theta >= -3/4 * math.pi:
+            # Move north
+            action = DiscreteDirectionAction.NORTH
+        else:
+            # Move west
+            action = DiscreteDirectionAction.WEST
+
+        # Can either change step size to be static or variable
+        step = 20  # min(50, min(np.abs(diff)))
+        new = near.take_action(action, step)
+        # Set the parent so that we can retrace later
+        new.parent_vector = (near, action)
+
+        # Check to make sure this doesn't cross an obstacle
+        diff = new.agent - near.agent
+        for o in StaticObstaclesConfiguration.obstacles():
+            obstacle = pygame.Rect(o)
+            prev = None
+            for i in range(101):
+                u = i / 100
+                test_point = diff * u + near.agent
+                if obstacle.collidepoint(test_point):
+                    # They collide, don't expand this way
+                    return None
+                    # if prev is not None:
+                    #     new.agent = prev
+                    # else:
+                    #     return None
+                else:
+                    prev = test_point
+
+        return new
+
+    def take_action(self, action: DiscreteDirectionAction, step_dist = 5) -> "StaticObstaclesConfiguration":
         # Returns the conf that results from taking an action
-        step_dist = 5
-
         new_conf = StaticObstaclesConfiguration(self.agent + (step_dist * action.direction_vector()), self.goal)
         return new_conf
 
