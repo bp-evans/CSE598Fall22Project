@@ -1,4 +1,5 @@
 import math
+import numbers
 
 import numpy as np
 from abc import ABC, abstractmethod
@@ -102,6 +103,13 @@ class Configuration(ABC):
         pass
 
     @abstractmethod
+    def dist_to_terminal(self) -> numbers.Real:
+        """
+        Returns the distance from this conf to a terminal conf.
+        :return:
+        """
+
+    @abstractmethod
     def visualize(self, display_map):
         """
         Visualize this configuration somehow, if possible
@@ -177,7 +185,10 @@ class StaticObstaclesConfiguration(Configuration):
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal
-        return np.linalg.norm(self.goal - self.agent) < 30
+        return np.linalg.norm(self.goal - self.agent) < 20
+
+    def dist_to_terminal(self) -> numbers.Real:
+        return np.linalg.norm(self.goal - self.agent)
 
     def get_parent_vector(self) -> Optional[Tuple["StaticObstaclesConfiguration", DiscreteDirectionAction]]:
         return self.parent_vector

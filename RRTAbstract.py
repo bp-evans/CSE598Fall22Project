@@ -39,7 +39,7 @@ class RRT_Core:
 
             if n_next.is_terminal():
                 # We reached the goal, roll back a path
-                path = []
+                path = [(n_next, None)]
                 node = n_next
                 while node.get_parent_vector() is not None:
                     path.append(node.get_parent_vector())

@@ -54,7 +54,7 @@ def main():
                             waiting = False
 
     observer = Observer(interactive=False)
-    graph, path_to_goal = core.RRTAlg(1000, observer)
+    graph, path_to_goal = core.RRTAlg(3000, observer)
 
     start_config.visualize(map)
 
