@@ -1,18 +1,17 @@
 import argparse
-
-
-from BCRRT import BCRRT
-from RRTAgent import RRTAgent, BCRRTAgent
+from BCRRT import BCRRTAgent
+from RRTAgent import RRTAgent
 from ObstacleGame import ObstacleGame
+import DeveloperName
 
 
 def main(parsed_args):
-    # Run the game with an RRt agent
+    # Run the game with an RRT agent
     if not parsed_args.behavior_cloning:
         rrt_agent = RRTAgent()
     else:
-        preset_conf = ObstacleGame.get_start_goal_preset()
-        rrt_agent = BCRRTAgent(BCRRT(preset_conf))
+        model_name = DeveloperName.my_name + 'model.pk'
+        rrt_agent = BCRRTAgent(model_name)
     game = ObstacleGame(rrt_agent)
     game.play(visual=True)
 

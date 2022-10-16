@@ -1,56 +1,76 @@
 import torch
-import DeveloperName
+from Agents import Agent
 import numpy as np
-
+from RRTAbstract import RRT_Core
+from RRTAgent import Observer
 from BehaviorCloning import MLP
-from Configuration import DiscreteDirectionAction, StaticObstaclesConfiguration
-
-saved_states = torch.load(DeveloperName.my_name + 'model.pk')
-model = MLP(input_shape=4)
-model.load_state_dict(saved_states['state_dict'])
-model.eval()
+from Configuration import DiscreteDirectionAction, Configuration, Action
+import pygame
+import random
 
 
-class BCRRT:
+class BCRRTAgent(Agent):
     """
-    This is essentially Max's Algorithm 1 from "Efficient Exploration via First-Person Behavior Cloning Assisted Rapidly-Exploring Random Trees"
+    This agent gets the next action by building an RRT tree seeded with the rollout of a BC policy
     """
 
-    def __init__(self, conf):
-        """
-        Takes in a BC policy and a start conf
-        :param policy:
-        """
-        self.conf = conf
-        self.step = 5
-        self.G = [conf]
+    def __init__(self, bc_model: str):
+        saved_states = torch.load(bc_model)
+        self.model = MLP(input_shape=4)
+        self.model.load_state_dict(saved_states['state_dict'])
+        self.model.eval()
 
-    def run(self, rollout_episodes: int):
+    def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
+        seed_tree = self.rollout(conf, 20)  # 5 rollouts
+        rrt = RRT_Core(seed_tree)
+        graph, path = rrt.RRTAlg(1000, Observer(display_map, conf))
+
+        if path is None:
+            closest = graph[0]
+            min_dist = closest.dist_to_terminal()
+            for v in graph:
+                dist = v.dist_to_terminal()
+                if dist < min_dist:
+                    closest = v
+                    min_dist = dist
+
+            next_step = closest
+            last_vec = None
+            while next_step.get_parent_vector() is not None:
+                last_vec = next_step.get_parent_vector()
+                next_step = next_step.get_parent_vector()[0]
+            if last_vec is None:
+                print("Error: RRT tree found that current conf is closest to goal. Taking random action.")
+                return random.choice(conf.get_legal_actions())
+            return last_vec[1]
+        else:
+            return path[0][1]
+
+    def rollout(self, conf: Configuration, rollout_episodes: int):
         """
         Rolls out the BC policy for N iters starting from conf and builds a tree, then runs RRT on that tree
         :param rollout_episodes:
         :return:
         """
+        G = [conf]
         while rollout_episodes:
             roll_out_depth = 40
-            conf = self.conf
             while roll_out_depth:
                 x = torch.tensor(conf.as_vector(), dtype=torch.float, requires_grad=False)
                 x = x.view(1, 4)
-                outputs = model(x)
+                outputs = self.model(x)
                 _, predicted = torch.max(outputs.data, 1)
                 predicted = int(predicted)
                 predicted += 1  # index start from 0
                 action = DiscreteDirectionAction(predicted)
-                new_conf = StaticObstaclesConfiguration(conf.agent + (20 * action.direction_vector()),
-                                                        conf.goal)
+                new_conf = conf.take_action(action, 20)
 
                 roll_out_depth -= 1
                 if not conf.is_valid_conf(new_conf):
                     continue
                 new_conf.parent_vector = (conf, action)
-                self.G.append(new_conf)
+                G.append(new_conf)
                 conf = new_conf
             rollout_episodes -= 1
 
-        return self.G
+        return G

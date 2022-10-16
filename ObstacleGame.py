@@ -30,10 +30,6 @@ class ObstacleGame:
 
         self.display_map = pygame.display.set_mode((mapw, maph))  # setting up pygame window of proper dimensions
 
-    @classmethod
-    def get_start_goal_preset(cls):
-        return StaticObstaclesConfiguration((50, 50), (800, 300))
-
     def play(self, visual=True):
         """
         Plays the game.
@@ -65,7 +61,7 @@ class ObstacleGame:
             print("Updating game based on action: " + str(action))
             conf = conf.take_action(action)
 
-            time.sleep(1)
+            time.sleep(0.05)
 
         # Show the result,
         print("Game Ended")
