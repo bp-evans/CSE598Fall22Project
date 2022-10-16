@@ -7,6 +7,7 @@ from torch.autograd import Variable
 import numpy as np
 from sklearn.model_selection import train_test_split
 import pandas as pd
+import DeveloperName
 
 cuda = torch.cuda.is_available()
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
@@ -30,7 +31,7 @@ class DemostrationDataset(Dataset):
     def populate_x_y(self, demo):
         for _, row in demo.iterrows():
             self.x.append(np.fromstring(row[0][1:-1], dtype='float64', sep=' '))
-            self.y.append(int(row[1]))
+            self.y.append(int(row[1]) - 1)
 
     def __getitem__(self, index):
         """
@@ -56,27 +57,30 @@ class MLP(nn.Module):
     MLP model for behavior cloning
     """
 
-    def __init__(self, input_shape, batch_size):
+    def __init__(self, input_shape=4):
         super(MLP, self).__init__()
         self.layers = nn.Sequential(
-            nn.Linear(input_shape, 16),
+            nn.Linear(input_shape, 8),
             nn.ReLU(),
-            nn.Linear(16, 8),
+            nn.BatchNorm1d(8),
+            nn.Linear(8, 8),
             nn.ReLU(),
-            nn.Linear(8, 16),
+            nn.BatchNorm1d(8),
+            nn.Linear(8, 4),
             nn.ReLU(),
-            nn.Linear(16, 4),
+            nn.BatchNorm1d(4),
+            nn.Linear(4, 4),
             nn.ReLU(),
-            nn.Linear(4, batch_size),
-            nn.ReLU()
+            nn.BatchNorm1d(4),
         )
 
     def forward(self, x):
         x = self.layers(x)
+        x = torch.flatten(x, 1)
         return x
 
 
-def train_test(dataset_path='demo.csv', input_size=4, batch_size=32, lr=0.0001, epochs=2000):
+def train_test(dataset_path='demo.csv', input_size=4, batch_size=64, lr=0.0001, epochs=1000, save_path='model.pk'):
     """
     Train and test the model and print the accuracies.
     """
@@ -92,12 +96,12 @@ def train_test(dataset_path='demo.csv', input_size=4, batch_size=32, lr=0.0001, 
         batch_size=batch_size,
         shuffle=True,
     )
-    model = MLP(input_size, batch_size)
+    model = MLP(input_size)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.CrossEntropyLoss()
-    train_losses = []
-    test_losses = []
     for epoch in range(epochs):
+        train_losses = []
+        test_losses = []
         model.train()
         for i, batch in enumerate(train_dataloader):
             x = torch.tensor(batch['x'], dtype=torch.float, device=device)
@@ -114,8 +118,8 @@ def train_test(dataset_path='demo.csv', input_size=4, batch_size=32, lr=0.0001, 
         total = 0
         with torch.no_grad():
             for i, batch in enumerate(test_dataloader):
-                x = torch.tensor(batch['x'], dtype=torch.float, device=device)
-                y = torch.tensor(batch['y'], dtype=torch.long, device=device)
+                x = torch.tensor(batch['x'], dtype=torch.float, device=device, requires_grad=False)
+                y = torch.tensor(batch['y'], dtype=torch.long, device=device, requires_grad=False)
                 outputs = model(x)
                 loss = loss_fn(outputs, y)
                 test_losses.append(loss.item())
@@ -124,8 +128,15 @@ def train_test(dataset_path='demo.csv', input_size=4, batch_size=32, lr=0.0001, 
                 total += 1
 
         print('epoch : {}, Mean train loss : {:.4f}, Mean test loss : {:.4f}, acc : {:.2f}%'
-              .format(epoch + 1, np.mean(train_losses), np.mean(test_losses), correct/total))
+              .format(epoch + 1, np.mean(train_losses), np.mean(test_losses), correct / total))
+
+    # Save model
+    save_state = {
+        'state_dict': model.state_dict(),
+        'optimizer': optimizer.state_dict()
+    }
+    torch.save(save_state, DeveloperName.my_name + save_path)
 
 
 if __name__ == "__main__":
-    train_test()
+    train_test(DeveloperName.my_name + 'Demos.csv')

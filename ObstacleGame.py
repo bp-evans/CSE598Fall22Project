@@ -30,6 +30,10 @@ class ObstacleGame:
 
         self.display_map = pygame.display.set_mode((mapw, maph))  # setting up pygame window of proper dimensions
 
+    @classmethod
+    def get_start_goal_preset(cls):
+        return StaticObstaclesConfiguration((50, 50), (800, 300))
+
     def play(self, visual=True):
         """
         Plays the game.
@@ -55,15 +59,13 @@ class ObstacleGame:
             print("Requesting action")
             action = self.agent.get_action(conf, self.display_map if visual else None)
 
-
             if self.demo:
                 demonstration.append((conf, action))
             # Take that action and update the conf
             print("Updating game based on action: " + str(action))
             conf = conf.take_action(action)
 
-            time.sleep(0.05)
-            pass
+            time.sleep(1)
 
         # Show the result,
         print("Game Ended")
@@ -71,7 +73,7 @@ class ObstacleGame:
         return demonstration
 
 
-class DynamicObstacleGame():
+class DynamicObstacleGame:
     """
     This class manages running 1 of our Obstacles Game.
     It can be run either with visuals (pygame) or without.

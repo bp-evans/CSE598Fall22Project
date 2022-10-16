@@ -182,6 +182,18 @@ class StaticObstaclesConfiguration(Configuration):
         # passing in obstacles from the abstract runner
         pass
 
+    def is_valid_conf(self, conf) -> bool:
+        """
+        Given a conf validate if it is valid in current environment.
+        """
+        # if (self.agent[0] == conf.agent[0] and self.agent[1] == conf.agent[1]) or\
+        #         (self.goal[0] == conf.goal[0] and self.goal[1] == self.goal[1]):
+        #     return False
+        for obs in self.obstacle_list:
+            if pygame.Rect(obs).collidepoint(conf.agent) or pygame.Rect(obs).collidepoint(conf.goal):
+                return False
+        return True
+
     def get_legal_actions(self) -> [DiscreteDirectionAction]:
         # Let all actions be valid
         return [DiscreteDirectionAction(i) for i in range(1, 5)]
@@ -310,6 +322,18 @@ class DynamicObstaclesConfiguration(Configuration):
         self.max_obs = 12
         self.obstacle_list = obstacle_list if obstacle_list else self.obstacles()
         # passing in obstacles from the abstract runner
+
+    def is_valid_conf(self, conf) -> bool:
+        """
+        Given a conf validate if it is valid in current environment.
+        """
+        # if (self.agent[0] == conf.agent[0] and self.agent[1] == conf.agent[1]) or\
+        #         (self.goal[0] == conf.goal[0] and self.goal[1] == self.goal[1]):
+        #     return False
+        for obs in self.obstacle_list:
+            if pygame.Rect(obs).collidepoint(conf.agent) or pygame.Rect(obs).collidepoint(conf.goal):
+                return False
+        return True
 
     def obstacles(self) -> ["Obstacles"]:
         """
@@ -442,3 +466,4 @@ class DynamicObstaclesConfiguration(Configuration):
     def get_obs_vector(self):
         return np.append(self.obstacle_list[0], self.obstacle_list[1:] +
                          [(0, 0, 0, 0) for _ in range(self.max_obs - len(self.obstacle_list))])
+
