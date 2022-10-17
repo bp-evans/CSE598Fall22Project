@@ -41,7 +41,7 @@ class Observer(RRTObserver):
     def rrt_terminated(self, found_terminal: bool):
         end = time.time()
         timeSec = end - start
-        file1 = open("RRT_Data.txt", "a")
+        file1 = open("BCRRT_Data.txt", "a")
         file1.write(str(timeSec) + "," + str(found_terminal) + "," + str(self.i) + "\n")
         file1.close()
         print(
