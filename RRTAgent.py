@@ -6,9 +6,7 @@ from Configuration import Configuration, Action
 import random
 import pygame
 import Visualizers
-import time
 
-start = time.time()
 class Observer(RRTObserver):
     def __init__(self, map, conf):
         self.i = 0
@@ -35,10 +33,6 @@ class Observer(RRTObserver):
             #             waiting = False
 
     def rrt_terminated(self, found_terminal: bool):
-        end = time.time()
-        file1 = open("BCRRTtimes.txt", "a")
-        file1.write(str(end - start)+","+str(found_terminal)+"\n")
-        file1.close()
         print(
             "RRT algo terminated after " + str(self.i) + " expansions. Found terminal: " + str(found_terminal))
 
@@ -55,42 +49,6 @@ class RRTAgent(Agent):
         if path is None:
             # TODO: Check that this makes sense if a terminal node wasn't found in the tree
             # Get the vertex closest to the goal and go there
-            closest = graph[0]
-            min_dist = closest.dist_to_terminal()
-            for v in graph:
-                dist = v.dist_to_terminal()
-                if dist < min_dist:
-                    closest = v
-                    min_dist = dist
-
-            next_step = closest
-            last_vec = None
-            while next_step.get_parent_vector() is not None:
-                last_vec = next_step.get_parent_vector()
-                next_step = next_step.get_parent_vector()[0]
-            if last_vec is None:
-                print("Error: RRT tree found that current conf is closest to goal. Taking random action.")
-                return random.choice(conf.get_legal_actions())
-            return last_vec[1]
-        else:
-            return path[0][1]
-
-
-class BCRRTAgent(Agent):
-    """
-    This agent gets the next action by building an RRT tree seeded with the rollout of a BC policy
-    """
-
-    def __init__(self, policy):
-        self.policy = policy
-
-    def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
-        # TODO: Rollout BC policy,
-        seed_tree = self.policy.run(20) # 5 rollouts
-        rrt = RRT_Core(seed_tree)
-        graph, path = rrt.RRTAlg(1000, Observer(display_map, conf))
-
-        if path is None:
             closest = graph[0]
             min_dist = closest.dist_to_terminal()
             for v in graph:

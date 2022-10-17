@@ -14,6 +14,7 @@ class RRTObserver:
     def rrt_terminated(self, found_terminal: bool):
         pass
 
+
 class RRT_Core:
     """
     An RRT algorithm that is state agnostic.
@@ -29,6 +30,12 @@ class RRT_Core:
         :return: 2-Tuple of 1. The entire RRT graph (vertices) and 2. an ordered list of state action pairs that start at the start
         and end at the goal
         """
+        # Check if the seed tree has any terminal nodes
+        for node in self.G:
+            if node.is_terminal():
+                observer.rrt_terminated(True)
+                return self.G, list(self.unroll_path(node))
+
         conf_type = type(self.G[0])
         for i in range(k):
 
@@ -44,15 +51,16 @@ class RRT_Core:
             self.G.append(n_next)
 
             if n_next.is_terminal():
-                # We reached the goal, roll back a path
-                path = [(n_next, None)]
-                node = n_next
-                while node.get_parent_vector() is not None:
-                    path.append(node.get_parent_vector())
-                    node = node.get_parent_vector()[0]
-
                 observer.rrt_terminated(True)
-                return self.G, list(path[::-1])
+                return self.G, list(self.unroll_path(n_next))
 
         observer.rrt_terminated(False)
         return self.G, None
+
+    def unroll_path(self, from_node: Configuration):
+        path = [(from_node, None)]
+        node = from_node
+        while node.get_parent_vector() is not None:
+            path.append(node.get_parent_vector())
+            node = node.get_parent_vector()[0]
+        return path[::-1]
