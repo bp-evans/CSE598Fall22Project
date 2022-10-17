@@ -6,8 +6,13 @@ from Configuration import Configuration, Action
 import random
 import pygame
 import Visualizers
+import time
+
+start = time.time()
+
 
 class Observer(RRTObserver):
+
     def __init__(self, map, conf):
         self.i = 0
         self.map = map
@@ -16,6 +21,7 @@ class Observer(RRTObserver):
     def rrt_expanded(self, vertices: List[Configuration], rand: Configuration, near: Configuration,
                      nnext: Configuration):
         self.i += 1
+
         if self.map is not None and self.i % 10 == 0:
             # print("Showing partial RRT tree")
             self.conf.visualize(self.map)
@@ -33,6 +39,11 @@ class Observer(RRTObserver):
             #             waiting = False
 
     def rrt_terminated(self, found_terminal: bool):
+        end = time.time()
+        timeSec = end - start
+        file1 = open("RRT_Data.txt", "a")
+        file1.write(str(timeSec) + "," + str(found_terminal) + "," + str(self.i) + "\n")
+        file1.close()
         print(
             "RRT algo terminated after " + str(self.i) + " expansions. Found terminal: " + str(found_terminal))
 
@@ -68,6 +79,3 @@ class RRTAgent(Agent):
             return last_vec[1]
         else:
             return path[0][1]
-
-
-
