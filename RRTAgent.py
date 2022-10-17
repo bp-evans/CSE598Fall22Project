@@ -6,8 +6,9 @@ from Configuration import Configuration, Action
 import random
 import pygame
 import Visualizers
+import time
 
-
+start = time.time()
 class Observer(RRTObserver):
     def __init__(self, map, conf):
         self.i = 0
@@ -34,6 +35,10 @@ class Observer(RRTObserver):
             #             waiting = False
 
     def rrt_terminated(self, found_terminal: bool):
+        end = time.time()
+        file1 = open("BCRRTtimes.txt", "a")
+        file1.write(str(end - start)+","+str(found_terminal)+"\n")
+        file1.close()
         print(
             "RRT algo terminated after " + str(self.i) + " expansions. Found terminal: " + str(found_terminal))
 
