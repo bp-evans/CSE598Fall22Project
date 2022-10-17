@@ -176,8 +176,7 @@ class ObstaclesConfiguration(Configuration):
         return True
 
     def get_legal_actions(self) -> [DiscreteDirectionAction]:
-        # Let all actions be valid
-        return [DiscreteDirectionAction(i) for i in range(1, 5)]
+        return list(filter(lambda c: self.take_action(c).is_valid_conf(), [DiscreteDirectionAction(i) for i in range(1, 5)]))
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal
@@ -234,8 +233,8 @@ class ObstaclesConfiguration(Configuration):
             action = DiscreteDirectionAction.WEST
 
         # Can either change step size to be static or variable
-        step = 20  # min(50, min(np.abs(diff)))
-        new = near.take_action(action, step)
+        # step = 20  # min(50, min(np.abs(diff)))
+        new = near.take_action(action)
         # Set the parent so that we can retrace later
         new.parent_vector = (near, action)
 
@@ -259,7 +258,7 @@ class ObstaclesConfiguration(Configuration):
 
         return new
 
-    def take_action(self, action: DiscreteDirectionAction, step_dist=5) -> "ObstaclesConfiguration":
+    def take_action(self, action: DiscreteDirectionAction, step_dist=10) -> "ObstaclesConfiguration":
         # Returns the conf that results from taking an action
         new_conf = type(self)(self.agent + (step_dist * action.direction_vector()), self.goal)
         return new_conf
