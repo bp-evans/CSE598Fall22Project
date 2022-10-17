@@ -59,7 +59,8 @@ class ObstacleGame:
                 demonstration.append((conf, action))
             # Take that action and update the conf
             print("Updating game based on action: " + str(action))
-            conf = conf.take_action(action)
+            new_conf = conf.take_action(action)
+            conf = new_conf if new_conf.is_valid_conf() else conf
 
             time.sleep(0.05)
 

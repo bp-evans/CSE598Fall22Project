@@ -11,6 +11,7 @@ import time
 start = time.time()
 
 
+
 class Observer(RRTObserver):
 
     def __init__(self, map, conf):

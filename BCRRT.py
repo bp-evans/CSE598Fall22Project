@@ -66,7 +66,7 @@ class BCRRTAgent(Agent):
                 new_conf = conf.take_action(action, 20)
 
                 roll_out_depth -= 1
-                if not conf.is_valid_conf(new_conf):
+                if not new_conf.is_valid_conf():
                     continue
                 new_conf.parent_vector = (conf, action)
                 G.append(new_conf)
