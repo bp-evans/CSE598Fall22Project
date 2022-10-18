@@ -141,11 +141,9 @@ def train_test(dataset_path='demo.csv', input_size=4, batch_size=64, lr=0.0001, 
 
 
 if __name__ == "__main__":
-    # read the path
-    os.chdir(r"C:\Users\braed\Documents\GitHub\CSE598Fall22Project\csv_files")
     # concatenate csv files of demos
     extension = 'csv'
-    csv_files = [i for i in glob.glob('*.{}'.format(extension))]
+    csv_files = [i for i in glob.glob('*Demos.{}'.format(extension))]
     demos_concat = pd.concat([pd.read_csv(f) for f in csv_files], ignore_index=True)
     # export to csv
     demos_concat.to_csv("demos_concat.csv", index=False, encoding='utf-8-sig')

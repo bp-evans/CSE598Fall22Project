@@ -63,7 +63,7 @@ class BCRRTAgent(Agent):
                 predicted = int(predicted)
                 predicted += 1  # index start from 0
                 action = DiscreteDirectionAction(predicted)
-                new_conf = conf.take_action(action, 20)
+                new_conf = conf.take_action(action)
 
                 roll_out_depth -= 1
                 if not new_conf.is_valid_conf():
