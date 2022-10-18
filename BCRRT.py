@@ -21,7 +21,7 @@ class BCRRTAgent(Agent):
         self.model.eval()
 
     def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
-        seed_tree = self.rollout(conf, 20)  # 5 rollouts
+        seed_tree = self.rollout(conf, 5)  # 5 rollouts
         rrt = RRT_Core(seed_tree)
         graph, path = rrt.RRTAlg(1000, Observer(display_map, conf))
 
@@ -54,7 +54,7 @@ class BCRRTAgent(Agent):
         """
         G = [conf]
         while rollout_episodes:
-            roll_out_depth = 40
+            roll_out_depth = 20
             while roll_out_depth:
                 x = torch.tensor(conf.as_vector(), dtype=torch.float, requires_grad=False)
                 x = x.view(1, 4)
