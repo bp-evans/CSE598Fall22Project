@@ -49,7 +49,7 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 % authors names on the first line, and the last on the second line, try using
 % \AND instead of \And before the third author name.
 
-\author{Aaron Kampmeier \AND Brandon Evans \AND Braeden Woodward \AND Pavan Kumar Raja}
+\author{Aaron Kampmeier \\ \texttt{akampmei@asu.edu} \And Brandon Evans \\ \texttt{bpevans@asu.edu} \And Braeden Woodward \\ \texttt{bmwoodar@asu.edu} \And Pavan Kumar Raja \\ \texttt{praja3@asu.edu}}
 
   % examples of more authors
   % \And
@@ -77,20 +77,33 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 
 \begin{document}
 
+% To cite something use \cite{} command such as:
+% \cite{ZuoMax2022EEvF}
+% \cite{9164659}
+% \cite{LaValleStevenM.2001RKP}
+% \cite{Perez-HiguerasNoe2018TRNB}
+
 
 \maketitle
 
 
 \begin{abstract}
+% TODO Evaluate if we need an abstract, probably would be good to have
   Not sure if we need this for baseline paper?
 \end{abstract}
 
 
 \section{Introduction}
 
+Rapidly-Exploring Random Trees (RRT) \cite{LaValleStevenM.2001RKP} have proven to be a very useful 
+
 \section{Problem Statement}
 
+% TODO Finish problem statement
+
 \section{Related Work}
+
+% TODO Fill out related work summaries
 
 \section{Problem Domain}
 
@@ -101,6 +114,8 @@ For our problem the agebt is creating a path to navigate from start to goal. In 
 Due to the static nature of the 2D environment as it stands now, our agent is being tested in a discrete space as the size and number of possible x,y coordinates the agent can be in is static at 500x800 pixels.
 
 \section{Learning Baseline}
+
+% TODO Learning Baseline
 
 \section{Experiment Metrics}
 
@@ -115,6 +130,7 @@ Our baseline performance was measured using 3 metrics:
 
 As our final goal is to create a RRT algorithm that uses a visual classifier as a cost function for our baseline we needed a learning RRT baseline rather than just standard RRT for the baseline. Because of this, metrics were taken for both our baseline algorithm (our version of CA-RRT) and a normal RRT algorithm. In order to make sure our baseline was functioning correctly we needed to ensure that our BCRRT functioned better than base RRT.
 
+% TODO Finish Results
 
 \begin{table}
   \caption{Metrics from RRT Algorithm}
@@ -162,6 +178,13 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
 
 \section{Future Work}
 
+% TODO Fill out Future Work
+
+\bibliographystyle{plain}
+\bibliography{../sources.bib}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Submission of papers to NeurIPS 2022}
 

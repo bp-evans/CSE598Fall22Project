@@ -1,0 +1,100 @@
+%% This BibTeX bibliography file was created using BibDesk.
+%% https://bibdesk.sourceforge.io/
+
+%% Created for Aaron Kampmeier at 2022-10-20 16:00:51 -0700 
+
+
+%% Saved with string encoding Unicode (UTF-8) 
+
+
+
+@article{ZuoMax2022EEvF,
+	abstract = {Modern day computer games have extremely large state and action spaces. To
+detect bugs in these games' models, human testers play the games repeatedly to
+explore the game and find errors in the games. Such gameplay is exhaustive and
+time consuming. Moreover, since robotics simulators depend on similar methods
+of model specification and debugging, the problem of finding errors in the
+model is of interest to the robotics community to ensure robot behaviors and
+interactions are consistent in simulators. Previous methods have used
+reinforcement learning arXiv:2103.13798 and search based methods (Chang, 2019,
+(Chang, 2021) arXiv:1811.06962 including Rapidly-exploring Random Trees (RRT)
+to explore a game's state-action space to find bugs. However, such search and
+exploration based methods are not efficient at exploring the state-action space
+without a pre-defined heuristic. In this work we attempt to combine a
+human-tester's expertise in solving games, and the RRT's exhaustiveness to
+search a game's state space efficiently with high coverage. This paper
+introduces Cloning Assisted RRT (CA-RRT) to test a game through search. We
+compare our methods to two existing baselines: 1) a weighted-RRT as described
+by arXiv:1812.03125; 2) human demonstration seeded RRT as described by Chang
+et. al. We find CA-RRT is applicable to more game maps and explores more game
+states in fewer tree expansions/iterations when compared to the existing
+baselines. In each test, CA-RRT reached more states on average in the same
+number of iterations as weighted-RRT. In our tested environments, CA-RRT
+reached the same number of states as weighted-RRT by more than 5000 fewer
+iterations on average, almost a 50% reduction and applied to more scenarios
+than. Moreover, as a consequence of our first person behavior cloning approach,
+CA-RRT worked on unseen game maps than just seeding the RRT with human
+demonstrated states.},
+	author = {Zuo, Max and Schick, Logan and Gombolay, Matthew and Gopalan, Nakul},
+	copyright = {http://creativecommons.org/licenses/by-nc-nd/4.0},
+	date-added = {2022-10-20 16:00:22 -0700},
+	date-modified = {2022-10-20 16:00:22 -0700},
+	language = {eng},
+	title = {Efficient Exploration via First-Person Behavior Cloning Assisted Rapidly-Exploring Random Trees},
+	year = {2022}}
+
+@inproceedings{9164659,
+	abstract = {With the aging of the population and the increase in the employment cost of the elderly service industry, the elderly service robot has become an important development field. However, the working environment of the service robot is complex, and the robot arm may collide with the environmental obstacles, which will cause damage not only to the obstacles but also to the robot arm and even the served object. In this paper, an improved rapidly exploring random tree algorithm is proposed for path planning of humanoid robotic arm. First, the threshold of random probability sampling is set as the selection criterion of the extension mode. Then the random sampling value and the probability sampling threshold are compared, and the target point is determined as a random point if the random sampling value is within the set threshold value. Otherwise, the new node will be expanded under the joint action of the target gravity and the random point gravity. This is the extension of classification based on random probability. Finally, the breadth-first search is used to smooth the initial exploration path. The simulation results show that the proposed method can effectively reduce the path planning time and path length.},
+	author = {Liu, Yuelei and Zuo, Guoyu},
+	booktitle = {2020 Chinese Control And Decision Conference (CCDC)},
+	date-added = {2022-10-20 15:59:20 -0700},
+	date-modified = {2022-10-20 15:59:20 -0700},
+	doi = {10.1109/CCDC49329.2020.9164659},
+	issn = {1948-9447},
+	month = {Aug},
+	pages = {397-402},
+	title = {Improved RRT Path Planning Algorithm for Humanoid Robotic Arm},
+	year = {2020},
+	bdsk-url-1 = {https://doi.org/10.1109/CCDC49329.2020.9164659}}
+
+@article{Perez-HiguerasNoe2018TRNB,
+	abstract = {This work presents an approach for learning navigation behaviors for robots using Optimal Rapidly-exploring Random Trees (RRT
+∗
+) as the main planner. A new learning algorithm combining both Inverse Reinforcement Learning and RRT
+∗
+is developed to learn the RRT
+∗
+'s cost function from demonstrations. A comparison with other state-of-the-art algorithms shows how the method can recover the behavior from the demonstrations. Finally, a learned cost function for social navigation is tested in real experiments with a robot in the laboratory.},
+	address = {Dordrecht},
+	author = {P{\'e}rez-Higueras, No{\'e} and Caballero, Fernando and Merino, Luis},
+	copyright = {Springer Science+Business Media B.V., part of Springer Nature 2017},
+	date-added = {2022-10-20 15:57:31 -0700},
+	date-modified = {2022-10-20 15:57:31 -0700},
+	issn = {1875-4791},
+	journal = {International journal of social robotics},
+	keywords = {Algorithms ; Control ; Cost function ; Data mining ; Engineering ; Learning from demonstration ; Machine learning ; Mechatronics ; Navigation ; Path planning ; Robotics ; Robots ; Science & Technology ; Social robots ; Technology},
+	language = {eng},
+	number = {2},
+	pages = {235-249},
+	publisher = {Springer Netherlands},
+	title = {Teaching Robot Navigation Behaviors to Optimal RRT Planners},
+	volume = {10},
+	year = {2018}}
+
+@article{LaValleStevenM.2001RKP,
+	abstract = {This paper presents the first randomized approach to kinodynamic planning (also known as trajectory planning or trajectory design). The task is to determine control inputs to drive a robot from an ini ial configuration and velocity to a goal configuration and velocity while obeying physically based dynamical models and avoiding obstacles in the robot's environment. The authors consider generic systems that express the nonlinear dynamics of a robot in terms of the robot's high-dimensional configuration space. Kinodynamic planning is treated as a motion-planning problem in a higher dimensional state space that has both first-order differential constraints and obstacle-based global constraints. The state space serves the same role as the configuration space for basic path planning; however, standard randomized path-planning techniques do not directly apply to planning trajectories in the state space. The authors have developed a randomized planning approach that is particularly tailored to trajectory planning problems in high-dimensional state spaces. The basis for this approach is the construction of rapidly exploring random trees, which offer benefits that are similar to those obtained by successful randomized holonomic planning methods but apply to a much broader class of problems. Theoretical analysis of the algorithm is given. Experimental results are presented for an implementation that computes trajectories for hovercrafts and satellites in cluttered environments, resulting in state spaces of up to 12 dimensions.},
+	address = {LONDON},
+	author = {LaValle, Steven M. and Kuffner, James J.},
+	copyright = {Copyright 2012 Elsevier B.V., All rights reserved.},
+	date-added = {2022-10-20 15:51:16 -0700},
+	date-modified = {2022-10-20 15:51:16 -0700},
+	issn = {0278-3649},
+	journal = {The International journal of robotics research},
+	keywords = {Algorithms ; Collision avoidance ; Motion planning ; Non-holonomic planning ; Robotics ; Science & Technology ; Technology ; Trajectory planning},
+	language = {eng},
+	number = {5},
+	pages = {378-400},
+	publisher = {SAGE Publications},
+	title = {Randomized Kinodynamic Planning},
+	volume = {20},
+	year = {2001}}

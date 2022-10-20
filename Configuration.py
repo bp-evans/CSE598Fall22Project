@@ -268,6 +268,7 @@ class ObstaclesConfiguration(Configuration):
         pass
 
     def get_obs_vector(self):
+        # TODO: This should probably move to as_vector() method in the DynamicObstaclesConfiguration
         return np.append(self.obstacle_list[0], self.obstacle_list[1:] +
                          [(0, 0, 0, 0) for _ in range(self.max_obs - len(self.obstacle_list))])
 
