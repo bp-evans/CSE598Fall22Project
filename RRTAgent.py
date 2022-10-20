@@ -11,13 +11,13 @@ import time
 start = time.time()
 
 
-
 class Observer(RRTObserver):
 
-    def __init__(self, map, conf):
+    def __init__(self, map, conf, first_highlighted=0):
         self.i = 0
         self.map = map
         self.conf = conf
+        self.first_highlighted = first_highlighted
 
     def rrt_expanded(self, vertices: List[Configuration], rand: Configuration, near: Configuration,
                      nnext: Configuration):
@@ -26,11 +26,11 @@ class Observer(RRTObserver):
         if self.map is not None and self.i % 10 == 0:
             # print("Showing partial RRT tree")
             self.conf.visualize(self.map)
-            Visualizers.draw_graph_and_path(self.map, vertices, None)
+            Visualizers.draw_graph_and_path(self.map, vertices, path=list(map(lambda x: (x, None), vertices[:self.first_highlighted])), v_color=None)
             # Interact
-            pygame.draw.circle(self.map, Visualizers.red, rand.agent, 5, 0)
-            pygame.draw.circle(self.map, Visualizers.green, near.agent, 4, 0)
-            pygame.draw.circle(self.map, Visualizers.purple, nnext.agent, 3, 0) if nnext is not None else """"""
+            pygame.draw.circle(self.map, Visualizers.Color.red.value(), rand.agent, 5, 0)
+            pygame.draw.circle(self.map, Visualizers.Color.green.value(), near.agent, 4, 0)
+            pygame.draw.circle(self.map, Visualizers.Color.purple.value(), nnext.agent, 3, 0) if nnext is not None else """"""
             pygame.display.update()
             pygame.event.wait(1)
             # waiting = self.interactive

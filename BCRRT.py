@@ -1,4 +1,8 @@
+import time
+
 import torch
+
+import Visualizers
 from Agents import Agent
 import numpy as np
 from RRTAbstract import RRT_Core
@@ -22,8 +26,12 @@ class BCRRTAgent(Agent):
 
     def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
         seed_tree = self.rollout(conf, 5)  # 5 rollouts
+        if display_map is not None:
+            # Show the rolled-out tree
+            Visualizers.draw_graph_and_path(display_map, seed_tree, None, v_color=Visualizers.Color.purple)
+            time.sleep(0.01)
         rrt = RRT_Core(seed_tree)
-        graph, path = rrt.RRTAlg(1000, Observer(display_map, conf))
+        graph, path = rrt.RRTAlg(1000, Observer(display_map, conf, first_highlighted=len(seed_tree)))
 
         if path is None:
             closest = graph[0]

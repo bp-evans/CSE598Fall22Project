@@ -12,8 +12,17 @@ import pandas as pd
 import DeveloperName
 
 cuda = torch.cuda.is_available()
+# For macos-arm64 support
+mps = hasattr(torch.backends, "mps") and torch.backends.mps.is_built() and torch.backends.mps.is_available()
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
-device = torch.device('gpu') if cuda else torch.device('cpu')
+if cuda:
+    device = torch.device('gpu')
+elif mps:
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
+print(f"PyTorch using device {device}")
 
 
 class DemostrationDataset(Dataset):
