@@ -8,6 +8,8 @@
 
 % ready for submission
 \usepackage[final]{neurips_2022}
+\usepackage{multirow}
+\usepackage[final]{graphicx}
 
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
@@ -92,11 +94,71 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 
 \section{Problem Domain}
 
+Currently, the problem domain consists primarily of 2D pygame environment which contains static obstacles that create a maze that the agent must navigate. As of the baseline presentation, the static 2D environment consists of 9 static obstacles, a static sart point and a static goal point. The start is in the upper left corner of the 2D environment and the current static goal is on the far right of the screen on the other side of all of the obstacles.
+
+For our problem the agebt is creating a path to navigate from start to goal. In order to do this, our agent uses an RRT algorithm.
+
+Due to the static nature of the 2D environment as it stands now, our agent is being tested in a discrete space as the size and number of possible x,y coordinates the agent can be in is static at 500x800 pixels.
+
 \section{Learning Baseline}
 
 \section{Experiment Metrics}
 
+Our baseline performance was measured using 3 metrics:
+\begin{itemize}
+	\item{Success Rate: The percentage of times out of n samples that the agent successfully reaches the goal.}
+	\item{Time: The time (s) taken from the start of RRT to termination due to either reaching the iteration limit or reaching the goal.}
+	\item{Number of Expansions: The number of nodes in the RRT graph at termination.}
+\end{itemize}
+
 \section{Experiment Results}
+
+As our final goal is to create a RRT algorithm that uses a visual classifier as a cost function for our baseline we needed a learning RRT baseline rather than just standard RRT for the baseline. Because of this, metrics were taken for both our baseline algorithm (our version of CA-RRT) and a normal RRT algorithm. In order to make sure our baseline was functioning correctly we needed to ensure that our BCRRT functioned better than base RRT.
+
+
+\begin{table}
+  \caption{Metrics from RRT Algorithm}
+  \label{RRT Metrics}
+  \centering
+  \begin{tabular}{llllll}
+    \cmidrule(r){1-6}
+   Sample Size    & Success Rate     & Mean Time(s) & Std. Dev Time & Mean Expansions & Std. Dev Expansions\\
+    \midrule
+    70 & .79 & 3.6179 & 1.2385 & 745.3562 & 211.5847 \\
+    100 & .81 & 3.5861 & 1.1871 & 752.03 & 202.2828 \\
+    120 & .79 & 2.9090 & 1.0498 & 751.5603 & 209.2586 \\
+    155 & .77 & 3.4672 & 1.2880 & 734.6838 & 213.4561 \\
+    185 & .79 & 3.3586 & 1.2298 & 738.7589 & 205.6531 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\begin{table}
+  \caption{Metrics from BCRRT Algorithm}
+  \label{BCRRT Metrics}
+  \centering
+  \begin{tabular}{llllll}
+    \cmidrule(r){1-6}
+   Sample Size    & Success Rate     & Mean Time(s) & Std. Dev Time & Mean Expansions & Std. Dev Expansions\\
+    \midrule
+    70 & .89 & 1.9586 & 1.8819 & 440.6875 & 378.6503 \\
+    100 & .91 & 2.0340 & 1.7459 & 442.09 & 372.4981 \\
+    120 & .92 & 1.6560 & 1.4974 & 439.7563 & 375.8521 \\
+    155 & .90 & 2.0366 & 1.8273 & 428.4387 & 376.2023 \\
+    185 & .89 & 2.0287 & 1.6985 & 431.4369 & 373.4285 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+	\centerline{\includegraphics{BoxWhiskerTime.png}}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centerline{\includegraphics{BoxWhiskerExpansions.png}}
+\end{figure}
+
 
 \section{Future Work}
 
