@@ -119,9 +119,39 @@ For our problem the agent is creating a path to navigate from start to goal. In 
 Due to the static nature of the 2D environment as it stands now, our agent is being tested in a discrete space as the size and number of possible x,y coordinates the agent can be in is static at 500x800 pixels.
 
 \section{Learning Baseline}
+To create a baseline for our CARRT, we require a demonstration. As we planned to use static obstacle space, we ignored the location of obstacles in creating the demo.
+We used pygame to set up our environment and demonstrations were collected by us playing the game using WASD keys. Each demonstration is a trajectory with (state, action) pairs. Each state is represented as (the current position of the agent, goal position) and action is represented as ENUM of WASD keys.
+We used a simple MLP model as a prediction/action generator, a summary of the model is given in Table 1.
+For the next phase of the project, we'll keep this model as a baseline and expand it to accommodate dynamic world state space.
 
-% TODO Learning Baseline
-% Pavan still needs to complete
+\begin{table}[h]
+  \caption{Behavior cloning MLP model summary}
+  \label{model summary}
+  \centering
+  \begin{tabular}{lll}
+    \cmidrule(r){1-3}
+   Layer (Type)          & Output Shape       &Parameter count\\
+    \midrule
+    Linear-1 & [-1, 8] & 40\\
+    ReLU-2 & [-1, 8] & 0\\
+    BatchNorm1d-3 & [-1, 8] & 16\\
+    Linear-4 & [-1, 8] & 72\\
+    ReLU-5 & [-1, 8] & 0\\
+    BatchNorm1d-6 & [-1, 8] & 16\\
+    Linear-7 & [-1, 4] & 36\\
+    ReLU-8 & [-1, 4] & 0\\
+    BatchNorm1d-9 & [-1, 4] & 8\\
+    Linear-10 & [-1, 4] & 20\\
+    ReLU-11 & [-1, 4] & 0\\
+    BatchNorm1d-12 & [-1, 4] & 8\\
+    \bottomrule
+    \cmidrule(r){1-2}
+        Total params & 216\\
+        Trainable params & 216\\
+        Non-trainable params & 0\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Experiment Metrics}
 
@@ -138,7 +168,7 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
 
 % TODO Finish Results
 
-\begin{table}
+\begin{table}[h]
   \caption{Metrics from RRT Algorithm}
   \label{RRT Metrics}
   \centering
@@ -156,7 +186,7 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
 \end{table}
 
 
-\begin{table}
+\begin{table}[h]
   \caption{Metrics from BCRRT Algorithm}
   \label{BCRRT Metrics}
   \centering
@@ -174,7 +204,7 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
 \end{table}
 
 
-\begin{figure}
+\begin{figure}[h]
 	\centering
 \begin{minipage}{.5\textwidth}
 \centering
@@ -190,16 +220,16 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
 \end{figure}
 
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 	\centerline{\includegraphics[scale=0.40]{RRT.png}}
         \caption{Expansion based solely on RRT.}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 	\centerline{\includegraphics[scale=0.45]{BCRRT.png}}
         \caption{Expansion after behavior cloned roll-out.}
 \end{figure}
-
+\clearpage
 
 \section{Future Work}
 We plan to build on our baseline and accomplish these listed tasks. 
