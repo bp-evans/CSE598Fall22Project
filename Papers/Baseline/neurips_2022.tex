@@ -93,12 +93,12 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 
 \section{Introduction}
 
-Rapidly-Exploring Random Trees (RRT) \cite{LaValleStevenM.2001RKP} have proven to be a very useful sample-based path-planning algorithm to efficiently search high-dimensional spaces. However, RRT can be hindered in environments with obstacles or specific pathways to a goal. The algorithm may waste time exploring down irrelevant or blocked paths. In this paper we will survey various learning approaches to problems encountered by RRT in such environments, evaluate a baseline modified RRT algorithm based on Behavior Cloning, and set ourselves up for future work to improve upon this baseline. 
+Rapidly-Exploring Random Trees (RRT) \cite{Steven} have proven to be a very useful sample-based path-planning algorithm to efficiently search high-dimensional spaces. However, RRT can be hindered in environments with obstacles or specific pathways to a goal. The algorithm may waste time exploring down irrelevant or blocked paths. In this paper we will survey various learning approaches to problems encountered by RRT in such environments, evaluate a baseline modified RRT algorithm based on Behavior Cloning, and set ourselves up for future work to improve upon this baseline. 
 
 \section{Problem Statement}
 
 % TODO Finish problem statement
-A basic RRT algorithm's performance can suffer in configuration spaces with obstacles by exploring down irrelevant or blocked paths. The surveyed learning improvements to RRT may help but they still need a way to discover where the goal states and relevant obstacles are in relation to the agent. This problem can arise a variety of different domains such as expansion through mazes, robotic control in constrained spaces \cite{9164659}, and systems testing of multi-step processes \cite{ZuoMax2022EEvF}.
+A basic RRT algorithm's performance can suffer in configuration spaces with obstacles by exploring down irrelevant or blocked paths. The surveyed learning improvements to RRT may help but they still need a way to discover where the goal states and relevant obstacles are in relation to the agent. This problem can arise a variety of different domains such as expansion through mazes, robotic control in constrained spaces \cite{9164659}, and systems testing of multi-step processes \cite{Zuo}.
 
 
 \section{Related Work}
@@ -206,6 +206,9 @@ We plan to build on our baseline and accomplish these listed tasks.
   \item Perform student’s t-test on the two algorithm results.
 \end{itemize}
 
+
+\bibliographystyle{plain}
+\bibliography{../sources.bib}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
