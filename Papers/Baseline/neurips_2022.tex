@@ -49,7 +49,7 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 % authors names on the first line, and the last on the second line, try using
 % \AND instead of \And before the third author name.
 
-\author{Aaron Kampmeier \\ \texttt{akampmei@asu.edu} \And Brandon Evans \\ \texttt{bpevans@asu.edu} \And Braeden Woodward \\ \texttt{bmwoodar@asu.edu} \And Pavan Kumar Raja \\ \texttt{praja3@asu.edu}}
+\author{Aaron Kampmeier \\ \texttt{akampmei@asu.edu} \And Brandon Evans \\ \texttt{bpevans@asu.edu} \And Braeden Woodard \\ \texttt{bmwoodar@asu.edu} \And Pavan Kumar Raja \\ \texttt{praja3@asu.edu}}
 
   % examples of more authors
   % \And
@@ -78,10 +78,8 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 \begin{document}
 
 % To cite something use \cite{} command such as:
-% \cite{ZuoMax2022EEvF}
-% \cite{9164659}
-% \cite{LaValleStevenM.2001RKP}
-% \cite{Perez-HiguerasNoe2018TRNB}
+% \cite{Zuo}
+% \cite{Perez}
 
 
 \maketitle
@@ -105,7 +103,12 @@ A basic RRT algorithm's performance can suffer in configuration spaces with obst
 
 \section{Related Work}
 
-% TODO Fill out related work summaries
+In the last few years, several contributions to robotic navigation and exploration have been proposed that incorporate variations of sampling-based costmap planners, such as RRT or RRT*, and learning from demonstrations. Zuo et. al. \cite{Zuo} proposes a method, Clone Assisted RRT (CA-RRT), that learns heuristics for a search-based algorithm from a limited number of human demonstrations. CA-RRT is an expansion of the human-seeded RRT (HS-RRT) proposed by Chang et. al. \cite{Chang}, which uses states from human demonstrations as seed configurations states within an RRT. This expansion includes adding a first-person image-state-based (behavioral) cloning approach over the HS-RRT. Zuo et. al. \cite{Zuo} method consists of collecting a set of human-created trajectories and training a behavioral cloning policy using the first-person state-action pairs from those trajectories to seed the RRT. These heuristics allow the search algorithms to automatically test other states in the game thus removing the necessity to test all possible scenarios in the game through human game play.
+
+Perez et. al. \cite{Perez} also proposes an approach to learn navigation behaviors from demonstrations with the use of sampling-based costmap planners, though they propose the use Inverse Reinforcement Learning (IRL) concepts to identify the RRT cost function that best fits the example trajectories. The proposed method, Rapidly-exploring random Trees Inverse Reinforcement Learning (RTIRL), makes use of the RRT* instead of a Markov Decision Process (MDP). This is due to the advantages that RRT* has over MDP, in which RRT* can handle continuous state and control spaces. Perez et. al. \cite{Perez} RTIRL method is used to extract the proper weights of the cost function from demonstration trajectories, which can then be used later in the RRT* process to allow the robot to reproduce the desired behavior at various scenarios. 
+
+Both papers propose learning algorithms that use sampling-based costmap planners for path planning and exploration. Our proposed method will also be expanding upon the RRT algorithm and involve collecting and utilizing human demonstrations to allow for learning from demonstrations. Our proposed algorithm will incorporate a similar behavior cloning (BC) approach to that of Zuo et. al. \cite{Zuo} as the BC policy will be act as a seed in the initial RRT configuration. In addition to BC, we aim to use a visual classifier to learn a cost function, by using an image to gather samples from various locations to determine the cost to reach the goal state. This approach is similar to Perez et. al. \cite{Perez} proposed method, which adjusts and learns a cost function of the RRT* planner.
+
 
 \section{Problem Domain}
 
@@ -182,8 +185,6 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
 
 % TODO Fill out Future Work
 
-\bibliographystyle{plain}
-\bibliography{../sources.bib}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -548,33 +549,27 @@ Do {\bf not} include this section in the anonymized submission, only in the fina
 
 \section*{References}
 
-
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-Note that the Reference section does not count towards the page limit.
-\medskip
+{
+\small
 
 
 {
 \small
 
+%[1] Chang, K., Aytemiz, B.,\ \&  Smith, A.M.\ (2019) Reveal-more:
+%Amplifying human effort in quality assurance testing using automated
+%exploration. {\it IEEE Conference on Games (CoG)}, pages 1–8.
+%
+%
+%[2] Perez-Higueras, N., Caballero, F.,\ \& Merino, L.\ (2018) Teaching robot navigation behaviors to optimal RRT planners. 
+%{\it International Journal of Social Robotics}. SpringerLink. URL https://link.springer.com/article/10.1007/s12369-017-0448-1.
+%
+%
+%[3] Zuo, M., Schick, L., Gombolay, M.\ \& Gopalan, N.\ (2022). Efficient exploration via first-person behavior cloning 
+%assisted rapidly-exploring random trees. arXiv. URL https://arxiv.org/abs/2203.12774 
 
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
-
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
-
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
+\bibliographystyle{plain}
+\bibliography{../sources.bib}
 }
 
 
