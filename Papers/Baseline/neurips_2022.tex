@@ -87,18 +87,18 @@ Learning Based RRT using a Visual Classifier as a Cost Function
 
 \begin{abstract}
 % TODO Evaluate if we need an abstract, probably would be good to have
-  Not sure if we need this for baseline paper?
+In robotic navigation and exploration, there is a need to investigate efficent methods to handle continous state and control spaces. Many contributions have proposed variations of RRT algorithms that can more efficiently handle these enviroments over an Markov Decision Process (MDP). In this paper, we propose a method that expands on a proposed RRT variant that incorporates behvior cloning (BC) and utilizes a visual classifier to learn the cost function of the optimal trajectories. 
 \end{abstract}
 
 
 \section{Introduction}
 
-Rapidly-Exploring Random Trees (RRT) \cite{Steven} have proven to be a very useful sample-based path-planning algorithm to efficiently search high-dimensional spaces. However, RRT can be hindered in environments with obstacles or specific pathways to a goal. The algorithm may waste time exploring down irrelevant or blocked paths. In this paper we will survey various learning approaches to problems encountered by RRT in such environments, evaluate a baseline modified RRT algorithm based on Behavior Cloning, and set ourselves up for future work to improve upon this baseline. 
+Rapidly-Exploring Random Trees (RRT) \cite{Steven} have proven to be a very useful sample-based path-planning algorithm to efficiently search high-dimensional spaces. However, RRT can be hindered in environments with obstacles or specific pathways to a goal. The algorithm may waste time exploring down irrelevant or blocked paths. In this paper, we will survey various learning approaches to problems encountered by RRT in such environments, evaluate a baseline modified RRT algorithm based on behavior cloning, present our experiment results and discuss our future work. 
 
 \section{Problem Statement}
 
 % TODO Finish problem statement
-A basic RRT algorithm's performance can suffer in configuration spaces with obstacles by exploring down irrelevant or blocked paths. The surveyed learning improvements to RRT may help but they still need a way to discover where the goal states and relevant obstacles are in relation to the agent. This problem can arise a variety of different domains such as expansion through mazes, robotic control in constrained spaces \cite{9164659}, and systems testing of multi-step processes \cite{Zuo}.
+A basic RRT algorithm's performance can suffer in configuration spaces with obstacles by exploring down irrelevant or blocked paths. The surveyed learning improvements to RRT may help but they still need a way to discover where the goal states and relevant obstacles are in relation to the agent. This problem can arise a variety of different domains such as expansions through mazes, robotic control in constrained spaces \cite{9164659}, and systems testing of multi-step processes \cite{Zuo}.
 
 
 \section{Related Work}
@@ -112,7 +112,7 @@ Both papers propose learning algorithms that use sampling-based costmap planners
 
 \section{Problem Domain}
 
-Currently, the problem domain consists primarily of 2D pygame environment which contains static obstacles that create a maze that the agent must navigate. As of the baseline presentation, the static 2D environment consists of 9 static obstacles, a static sart point and a static goal point. The start is in the upper left corner of the 2D environment and the current static goal is on the far right of the screen on the other side of all of the obstacles.
+Currently, the problem domain consists primarily of 2D pygame environment which contains static obstacles that create a maze that the agent must navigate. As of the baseline presentation, the static 2D environment consists of 9 static obstacles, a static start point and a static goal point. The start is in the upper left corner of the 2D environment and the current static goal is on the far right of the screen on the other side of all of the obstacles.
 
 For our problem the agent is creating a path to navigate from start to goal. In order to do this, our agent uses an RRT algorithm.
 
@@ -121,6 +121,7 @@ Due to the static nature of the 2D environment as it stands now, our agent is be
 \section{Learning Baseline}
 
 % TODO Learning Baseline
+% Pavan still needs to complete
 
 \section{Experiment Metrics}
 
@@ -132,8 +133,8 @@ Our baseline performance was measured using 3 metrics:
 \end{itemize}
 
 \section{Experiment Results}
-
-As our final goal is to create a RRT algorithm that uses a visual classifier as a cost function for our baseline we needed a learning RRT baseline rather than just standard RRT for the baseline. Because of this, metrics were taken for both our baseline algorithm (our version of CA-RRT) and a normal RRT algorithm. In order to make sure our baseline was functioning correctly we needed to ensure that our BCRRT functioned better than base RRT.
+% Detail result findings
+As our final goal is to create a RRT algorithm that uses a visual classifier as a cost function for our baseline, we needed a learning RRT baseline rather than just standard RRT for the baseline. Because of this, metrics were taken for both our baseline algorithm (our version of CA-RRT) and a normal RRT algorithm. In order to ensure our baseline was functioning correctly, we must see an improvement of our BCRRT over the base RRT. We can see the metric results for RRT in Table \ref{RRT Metrics} as well as the BCRRT in Table \ref{BCRRT Metrics}.
 
 % TODO Finish Results
 
