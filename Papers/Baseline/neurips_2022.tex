@@ -173,15 +173,23 @@ As our final goal is to create a RRT algorithm that uses a visual classifier as 
   \end{tabular}
 \end{table}
 
-\begin{figure}[htbp]
-	\centerline{\includegraphics{BoxWhiskerTime.png}}
-        \caption{Time take to reach Goal}
+
+\begin{figure}
+	\centering
+\begin{minipage}{.5\textwidth}
+\centering
+	\includegraphics[width=.9\linewidth]{BoxWhiskerTime.png}
+        \caption{Time taken to reach Goal}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+\centering
+	\includegraphics[width=.9\linewidth]{BoxWhiskerExpansions.png}
+        \caption{Number of nodes expanded.}
+\end{minipage}
+
 \end{figure}
 
-\begin{figure}[htbp]
-	\centerline{\includegraphics{BoxWhiskerExpansions.png}}
-        \caption{Number of nodes expanded.}
-\end{figure}
+
 \begin{figure}[htbp]
 	\centerline{\includegraphics[scale=0.40]{RRT.png}}
         \caption{Expansion based solely on RRT.}
