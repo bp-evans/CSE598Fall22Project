@@ -40,9 +40,9 @@ def main(parsed_args):
 
     print("Play the game")
     demo = game.play(True)
-    if parsed_args.collect:
-        file_path = DeveloperName.my_name + "Demos.csv"
-        save_demo(demo, file_path)
+    # if parsed_args.collect:
+    #     file_path = DeveloperName.my_name + "Demos.csv"
+    #     save_demo(demo, file_path)
 
 
 if __name__ == "__main__":

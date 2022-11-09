@@ -1,8 +1,9 @@
 import time
-
+import uuid
+import os
+import pandas as pd
 import pygame
 import random
-
 from Agents import Agent
 from Configuration import StaticObstaclesConfiguration, DynamicObstaclesConfiguration
 
@@ -42,8 +43,21 @@ class ObstacleGame:
         # Begin with some configuration
         conf = StaticObstaclesConfiguration((50, 50), (800, 300))
 
+        # Grab current demonstration labels
+        demonstration_label_file = "ImageLabels.csv"
+        images_dir = "image_demos/"
+        try:
+            demonstration_labels = pd.read_csv(demonstration_label_file)
+        except FileNotFoundError:
+            # File doesn't exist, create a new dataset
+            demonstration_labels = pd.DataFrame({"Image Name": [], "Label": []})
+
+        if not os.path.exists(images_dir):
+            os.makedirs(images_dir)
+
+
         # Game Loop
-        demonstration = list()
+        # demonstration = list()
         while not conf.is_terminal():
             # If requested, visualize the game conf
             if visual:
@@ -56,7 +70,17 @@ class ObstacleGame:
             action = self.agent.get_action(conf, self.display_map if visual else None)
 
             if self.demo:
-                demonstration.append((conf, action))
+                # Switch over to using images as demos
+                # Write an image of the game space to image_demos
+                filename = str(uuid.uuid1()) + ".jpg"
+                pygame.image.save(self.display_map, images_dir+filename)
+                # Save this label
+                new_label = {"Image Name": [filename], "Label": [action.value]}
+                # demonstration_labels.iloc[len(demonstration_labels.index)] = [filename, action]
+                demonstration_labels = pd.concat([demonstration_labels, pd.DataFrame(new_label)])
+                # demonstration_labels.append(new_label, ignore_index=True)
+
+                # demonstration.append((conf, action))
             # Take that action and update the conf
             print("Updating game based on action: " + str(action))
             new_conf = conf.take_action(action)
@@ -67,7 +91,9 @@ class ObstacleGame:
         # Show the result,
         print("Game Ended")
 
-        return demonstration
+        # Save demonstrations
+        demonstration_labels.to_csv(demonstration_label_file)
+        # return demonstration
 
 
 class DynamicObstacleGame:
