@@ -42,9 +42,9 @@ def main():
                 start_config.visualize(map)
                 Visualizers.draw_graph_and_path(map, vertices, None)
                 # Interact
-                pygame.draw.circle(map, Visualizers.red, rand.agent, 5, 0)
-                pygame.draw.circle(map, Visualizers.green, near.agent, 4, 0)
-                pygame.draw.circle(map, Visualizers.purple, nnext.agent, 3, 0) if nnext is not None else """"""
+                pygame.draw.circle(map, Visualizers.Color.red.value(), rand.agent, 5, 0)
+                pygame.draw.circle(map, Visualizers.Color.green.value(), near.agent, 4, 0)
+                pygame.draw.circle(map, Visualizers.Color.purple.value(), nnext.agent, 3, 0) if nnext is not None else """"""
                 pygame.display.update()
                 pygame.event.wait(1)
                 waiting = self.interactive
