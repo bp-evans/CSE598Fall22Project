@@ -59,7 +59,7 @@ class RRT_Core:
 
     def unroll_path(self, from_node: Configuration):
         path = [(from_node, None)]
-        node = from_node
+        node = from_node 
         while node.get_parent_vector() is not None:
             path.append(node.get_parent_vector())
             node = node.get_parent_vector()[0]

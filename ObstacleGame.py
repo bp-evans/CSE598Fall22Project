@@ -22,6 +22,7 @@ class ObstacleGame:
 
         self.agent = agent
         self.demo = demo
+        self.autoDemo = autoDemo
 
         dimensions = (500, 800)
         maph, mapw = dimensions
@@ -68,6 +69,7 @@ class ObstacleGame:
             # Query the agent for an action
             print("Requesting action")
             action = self.agent.get_action(conf, self.display_map if visual else None)
+
 
             if self.demo:
                 # Switch over to using images as demos

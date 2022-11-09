@@ -56,7 +56,7 @@ class RRTAgent(Agent):
 
     def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
         rrt = RRT_Core([conf])
-        graph, path = rrt.RRTAlg(1000, Observer(display_map, conf))
+        graph, path = rrt.RRTAlg(2500, Observer(display_map, conf)) # where the k is changed
 
         if path is None:
             # TODO: Check that this makes sense if a terminal node wasn't found in the tree
@@ -77,6 +77,6 @@ class RRTAgent(Agent):
             if last_vec is None:
                 print("Error: RRT tree found that current conf is closest to goal. Taking random action.")
                 return random.choice(conf.get_legal_actions())
-            return last_vec[1]
+            return last_vec[1], None
         else:
             return path[0][1]
