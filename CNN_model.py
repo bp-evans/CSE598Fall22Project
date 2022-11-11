@@ -1,3 +1,4 @@
+import argparse
 import glob
 import os
 # Getting this conflicting error. Most probably b/w sklearn and pytorch. Couldn't resolve it without this hack.
@@ -26,12 +27,14 @@ print(f"PyTorch using device {device}")
 
 
 class ImageDataset(Dataset):
-    def __init__(self, transforms_=None, image_folder=False, dataset=None):
+    def __init__(self, transforms_=None, image_folder=False, dataset=None, data_size=100000):
         self.transform = transforms.Compose(transforms_)
         self.folder = image_folder
         self.image_files = []
         self.image_labels = []
         self.populate_data(dataset)
+        self.image_labels = self.image_labels[:data_size]
+        self.image_files = self.image_files[:data_size]
 
     def populate_data(self, dataset):
         for _, row in dataset.iterrows():
@@ -89,8 +92,8 @@ class CNNModel(nn.Module):
 
 
 def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
-               epochs=200, save_path='cnn_model.pk', image_folder="image_demos"):
-    save_dict = "trained_models"
+               epochs=100, save_path='cnn_model.pk', image_folder="image_demos",
+               data_size=100000):
     dataset = pd.read_csv(csv_path, skiprows=1, header=None)
     train_data, test_data = train_test_split(dataset, train_size=0.8)
     transforms_ = [
@@ -101,14 +104,16 @@ def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
     train_dataloader = DataLoader(
         ImageDataset(transforms_=transforms_,
                      dataset=train_data,
-                     image_folder=image_folder),
+                     image_folder=image_folder,
+                     data_size=data_size),
         batch_size=batch_size,
         shuffle=True,
     )
     test_dataloader = DataLoader(
         ImageDataset(transforms_=transforms_,
                      dataset=test_data,
-                     image_folder=image_folder),
+                     image_folder=image_folder,
+                     data_size=data_size),
         batch_size=batch_size,
         shuffle=True,
     )
@@ -156,5 +161,13 @@ def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
 
 
 if __name__ == "__main__":
-    # concatenate csv files of demos
-    train_test()
+    parser = argparse.ArgumentParser(
+        prog='CNN model',
+        description='Train CNN model')
+
+    parser.add_argument('-e', '--epochs', action='store', type=int,
+                        default=100, help='number of epochs to train')
+    parser.add_argument('-s', '--data_size', action='store', type=int,
+                        default=100000, help='max number of training examples')
+    args = parser.parse_args()
+    train_test(epochs=args.epochs, data_size=args.data_size)
