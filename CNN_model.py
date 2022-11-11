@@ -32,8 +32,6 @@ class ImageDataset(Dataset):
         self.image_files = []
         self.image_labels = []
         self.populate_data(dataset)
-        self.image_files = self.image_files[:1000]
-        self.image_labels = self.image_labels[:1000]
 
     def populate_data(self, dataset):
         for _, row in dataset.iterrows():
