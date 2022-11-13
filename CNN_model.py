@@ -157,7 +157,7 @@ def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
         'state_dict': model.state_dict(),
         'optimizer': optimizer.state_dict()
     }
-    torch.save(save_state, "./models/" + epochs + "_" + save_path)
+    torch.save(save_state, "./models/" + str(epochs) + "_" + save_path)
 
 
 if __name__ == "__main__":
