@@ -1,7 +1,7 @@
 import time
 
 import torch
-
+from abc import abstractmethod
 import Visualizers
 from Agents import Agent
 import numpy as np
@@ -13,19 +13,16 @@ import pygame
 import random
 
 
-class BCRRTAgent(Agent):
+class ModelAgent(Agent):
     """
     This agent gets the next action by building an RRT tree seeded with the rollout of a BC policy
     """
 
-    def __init__(self, bc_model: str):
-        saved_states = torch.load(bc_model)
-        self.model = MLP(input_shape=4)
-        self.model.load_state_dict(saved_states['state_dict'])
-        self.model.eval()
+    def __init__(self):
+        pass
 
     def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
-        seed_tree = self.rollout(conf, 5)  # 5 rollouts
+        seed_tree = self.rollout(conf, 5, surface=display_map)  # 5 rollouts
         if display_map is not None:
             # Show the rolled-out tree
             Visualizers.draw_graph_and_path(display_map, seed_tree, None, v_color=Visualizers.Color.purple)
@@ -54,7 +51,7 @@ class BCRRTAgent(Agent):
         else:
             return path[0][1]
 
-    def rollout(self, conf: Configuration, rollout_episodes: int):
+    def rollout(self, conf: Configuration, rollout_episodes: int, surface: pygame.surface = None):
         """
         Rolls out the BC policy for N iters starting from conf and builds a tree, then runs RRT on that tree
         :param rollout_episodes:
@@ -64,13 +61,7 @@ class BCRRTAgent(Agent):
         while rollout_episodes:
             roll_out_depth = 20
             while roll_out_depth:
-                x = torch.tensor(conf.as_vector(), dtype=torch.float, requires_grad=False)
-                x = x.view(1, 4)
-                outputs = self.model(x)
-                _, predicted = torch.max(outputs.data, 1)
-                predicted = int(predicted)
-                predicted += 1  # index start from 0
-                action = DiscreteDirectionAction(predicted)
+                action = self.get_model_output(conf, surface)
                 new_conf = conf.take_action(action)
 
                 roll_out_depth -= 1
@@ -82,3 +73,50 @@ class BCRRTAgent(Agent):
             rollout_episodes -= 1
 
         return G
+
+    @abstractmethod
+    def get_model_output(self, conf: Configuration, surface: pygame.surface = None) -> Action:
+        """
+        Implement this to return the output action from a model
+        :param surface:
+        :param conf:
+        :return:
+        """
+        pass
+
+
+class BCRRTAgent(ModelAgent):
+    def __init__(self, bc_model: str):
+        saved_states = torch.load(bc_model)
+        self.model = MLP(input_shape=4)
+        self.model.load_state_dict(saved_states['state_dict'])
+        self.model.eval()
+        super(BCRRTAgent, self).__init__()
+
+    def get_model_output(self, conf: Configuration, surface=None) -> Action:
+        x = torch.tensor(conf.as_vector(), dtype=torch.float, requires_grad=False)
+        x = x.view(1, 4)
+        outputs = self.model(x)
+        _, predicted = torch.max(outputs.data, 1)
+        predicted = int(predicted)
+        predicted += 1  # index start from 0
+        action = DiscreteDirectionAction(predicted)
+        return action
+
+
+class ImageBCRRRTAgent(ModelAgent):
+    def __init__(self, jit_path: str):
+        self.model = torch.jit.load(jit_path, map_location=torch.device("cpu"))
+        self.model.eval()
+        super(ImageBCRRRTAgent, self).__init__()
+
+    def get_model_output(self, conf: Configuration, surface=None) -> Action:
+        # Get the surface as an image
+        surf = pygame.surfarray.pixels3d(surface)
+        surf = surf.swapaxes(0,2)
+        x = torch.from_numpy(surf.copy())
+        outputs = self.model(x)
+        predicted = torch.argmax(outputs.data)
+        predicted = int(predicted)
+        action = DiscreteDirectionAction(predicted)
+        return action

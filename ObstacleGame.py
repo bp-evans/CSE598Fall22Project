@@ -22,7 +22,6 @@ class ObstacleGame:
 
         self.agent = agent
         self.demo = demo
-        self.autoDemo = autoDemo
 
         dimensions = (500, 800)
         maph, mapw = dimensions
