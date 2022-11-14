@@ -12,6 +12,8 @@ from Agents import Agent
 from RRTAgent import Observer
 from Configuration import StaticObstaclesConfiguration, DynamicObstaclesConfiguration
 from RRTAbstract import RRT_Core, RRTObserver
+import numpy as np
+from randomObs import setValsRandom
 
 def main(parsed_args):
     num_demos = int(parsed_args.n)
@@ -23,7 +25,18 @@ def main(parsed_args):
 
     display_map = pygame.display.set_mode((mapw, maph))
 
-    conf = StaticObstaclesConfiguration((50, 50), (800, 300))
+    goal = (800, 300) # change this later
+
+    if(int(parsed_args.d) == 1):
+        print("Dynamic Mode")
+        goalx = random.randint(200,800)
+        goaly = random.randint(0,500)
+        goal = (goalx, goaly)
+        setValsRandom(goal) # set goal for randomObs
+        conf = DynamicObstaclesConfiguration((50, 50), goal)
+    else:
+        print("Static Mode")
+        conf = StaticObstaclesConfiguration((50, 50), goal)
 
     # Grab current demonstration labels
     demonstration_label_file = "ImageLabels.csv"
@@ -42,7 +55,7 @@ def main(parsed_args):
     for i in range(0,num_demos):
         print("Running RRT")
         rrt = RRT_Core([conf])
-        graph, path = rrt.RRTAlg(10000, Observer(None, conf)) 
+        graph, path = rrt.RRTAlg(10000, Observer(display_map, conf)) # change if you want to visualize the RRT
     
         # Testing path contents
         print("Path Length:")
@@ -54,7 +67,11 @@ def main(parsed_args):
         # Loops through path to goal showing agent position and saving screenshots with action information
         for x in path:
             vec = x[0].as_vector()
-            new_conf = StaticObstaclesConfiguration((vec[0], vec[1]), (800, 300))
+            if(int(parsed_args.d) == 1):
+                new_conf = DynamicObstaclesConfiguration((vec[0], vec[1]), goal)
+            else:
+                new_conf = StaticObstaclesConfiguration((vec[0], vec[1]), goal)
+
             new_conf.visualize(display_map)
             pygame.event.pump()
             filename = str(uuid.uuid1()) + ".jpg"
@@ -84,5 +101,6 @@ if __name__ == "__main__":
         description='Run auto generated RRT demos')
 
     parser.add_argument('-n')
+    parser.add_argument('-d')
     args = parser.parse_args()
     main(args)
