@@ -24,7 +24,7 @@ def main(parsed_args):
 
     goal = (800, 300) # change this later
 
-    if(int(parsed_args.d) == 1):
+    if parsed_args.d:
         print("Dynamic Mode")
         goalx = random.randint(200,800)
         goaly = random.randint(0,500)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         prog='RRT Demos',
         description='Run auto generated RRT demos')
 
-    parser.add_argument('-n', default=100)
-    parser.add_argument('-d')
+    parser.add_argument('-n', help="The number of demonstrations to run", default=100)
+    parser.add_argument('-d', help="Use this flag to indicate the obstacles should be dynamic", action='store_true')
     args = parser.parse_args()
     main(args)
