@@ -25,7 +25,7 @@ print(f"PyTorch using device {device}")
 
 
 class ImageDataset(Dataset):
-    def __init__(self, transforms_=None, image_folder="image_demos/", annotations_file="ImageLabels.csv"):
+    def __init__(self, image_folder, annotations_file, transforms_=None):
         self.transform = transforms_
         self.folder = image_folder
         self.labels = pd.read_csv(annotations_file)
@@ -104,10 +104,10 @@ class CNNModel(nn.Module):
         return x
 
 
-def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
+def train_test(csv_path='ImageLabels.csv', batch_size=64, lr=0.0001,
                epochs=100, save_path='cnn_model.pk', image_folder="image_demos/"):
-    save_dict = "trained_models"
-    dataset = ImageDataset(transforms_=None)
+    identifier = input("Identifier for this training run: ")
+    dataset = ImageDataset(image_folder=image_folder, annotations_file=csv_path, transforms_=None)
     train_size = int(0.8 * len(dataset))
     test_size = len(dataset) - train_size
 
@@ -155,7 +155,7 @@ def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
     scripted_model = torch.jit.script(model)
     if not os.path.exists("./models/"):
         os.makedirs("./models/")
-    save_path2 = f"./models/ak_{epochs}_{accuracy:.3f}.pt"
+    save_path2 = f"./models/ak_{epochs}_{accuracy:.3f}_{identifier}.pt"
     scripted_model.save(save_path2)
     print("Saved JIT of model to " + save_path2)
     # Save model
@@ -163,7 +163,7 @@ def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
         'state_dict': model.state_dict(),
         'optimizer': optimizer.state_dict()
     }
-    torch.save(save_state, "./models/" + str(epochs) + "_" + save_path)
+    torch.save(save_state, "./models/" + str(epochs) + "_" + identifier + "_" + save_path)
 
 
 if __name__ == "__main__":
