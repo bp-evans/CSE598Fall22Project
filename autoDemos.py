@@ -55,7 +55,7 @@ def main(parsed_args):
     for i in range(0,num_demos):
         print("Running RRT")
         rrt = RRT_Core([conf])
-        graph, path = rrt.RRTAlg(10000, Observer(display_map, conf)) # change if you want to visualize the RRT
+        graph, path = rrt.RRTAlg(10000, Observer(None, conf)) # change None to displayMap if you want to visualize the RRT
     
         # Testing path contents
         print("Path Length:")
