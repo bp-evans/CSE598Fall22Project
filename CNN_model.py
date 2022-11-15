@@ -158,7 +158,7 @@ def train_test(csv_path='ImageLabels.csv', batch_size=64, lr=0.0001,
     scripted_model = torch.jit.script(model)
     if not os.path.exists("./models/"):
         os.makedirs("./models/")
-    save_path2 = f"./models/ak_{epochs}_{accuracy:.3f}_{identifier}.pt"
+    save_path2 = f"./models/ts_{epochs}_{accuracy:.3f}_{identifier}.pt"
     scripted_model.save(save_path2)
     print("Saved JIT of model to " + save_path2)
     # Save model

@@ -22,7 +22,7 @@ class ModelAgent(Agent):
         pass
 
     def get_action(self, conf: Configuration, display_map: pygame.Surface = None) -> Action:
-        seed_tree = self.rollout(conf, 5, surface=display_map)  # 5 rollouts
+        seed_tree = self.rollout(conf, 5)  # 5 rollouts
         if display_map is not None:
             # Show the rolled-out tree
             Visualizers.draw_graph_and_path(display_map, seed_tree, None, v_color=Visualizers.Color.purple)
@@ -51,7 +51,7 @@ class ModelAgent(Agent):
         else:
             return path[0][1]
 
-    def rollout(self, conf: Configuration, rollout_episodes: int, surface: pygame.surface = None):
+    def rollout(self, conf: Configuration, rollout_episodes: int):
         """
         Rolls out the BC policy for N iters starting from conf and builds a tree, then runs RRT on that tree
         :param rollout_episodes:
@@ -61,7 +61,7 @@ class ModelAgent(Agent):
         while rollout_episodes:
             roll_out_depth = 20
             while roll_out_depth:
-                action = self.get_model_output(conf, surface)
+                action = self.get_model_output(conf)
                 new_conf = conf.take_action(action)
 
                 roll_out_depth -= 1
@@ -75,7 +75,7 @@ class ModelAgent(Agent):
         return G
 
     @abstractmethod
-    def get_model_output(self, conf: Configuration, surface: pygame.surface = None) -> Action:
+    def get_model_output(self, conf: Configuration) -> Action:
         """
         Implement this to return the output action from a model
         :param surface:
@@ -93,7 +93,7 @@ class BCRRTAgent(ModelAgent):
         self.model.eval()
         super(BCRRTAgent, self).__init__()
 
-    def get_model_output(self, conf: Configuration, surface=None) -> Action:
+    def get_model_output(self, conf: Configuration) -> Action:
         x = torch.tensor(conf.as_vector(), dtype=torch.float, requires_grad=False)
         x = x.view(1, 4)
         outputs = self.model(x)
@@ -110,7 +110,11 @@ class ImageBCRRRTAgent(ModelAgent):
         self.model.eval()
         super(ImageBCRRRTAgent, self).__init__()
 
-    def get_model_output(self, conf: Configuration, surface=None) -> Action:
+    def get_model_output(self, conf: Configuration) -> Action:
+        # Need to visualize the conf on a background surface
+        surface = pygame.Surface((conf.mapw, conf.maph))
+        conf.visualize(surface)
+
         # Get the surface as an image
         surf = pygame.surfarray.pixels3d(surface)
         surf = surf.swapaxes(0,2)
