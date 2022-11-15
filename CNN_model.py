@@ -1,14 +1,13 @@
 import argparse
 import glob
+import math
 import os
-# Getting this conflicting error. Most probably b/w sklearn and pytorch. Couldn't resolve it without this hack.
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+import time
 import pandas as pd
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, random_split
 from torch.utils.data import DataLoader
-from PIL import Image
-from sklearn.model_selection import train_test_split
 import torchvision.transforms as transforms
+from torchvision.io import read_image
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
@@ -27,137 +26,147 @@ print(f"PyTorch using device {device}")
 
 
 class ImageDataset(Dataset):
-    def __init__(self, transforms_=None, image_folder=False, dataset=None, data_size=100000):
-        self.transform = transforms.Compose(transforms_)
+    def __init__(self, image_folder, annotations_file, transforms_=None, data_size=None):
+        self.transform = transforms_
         self.folder = image_folder
-        self.image_files = []
-        self.image_labels = []
-        self.populate_data(dataset)
-        self.image_labels = self.image_labels[:data_size]
-        self.image_files = self.image_files[:data_size]
-
-    def populate_data(self, dataset):
-        for _, row in dataset.iterrows():
-            image_ = os.path.join(".", self.folder, row[3])
-            if os.path.exists(image_):
-                self.image_files.append(image_)
-                self.image_labels.append(int(row[4]))
-
-    def to_rgb(self, image):
-        rgb_image = Image.new("RGB", image.size)
-        rgb_image.paste(image)
-        return rgb_image
+        self.labels = pd.read_csv(annotations_file)
+        if data_size is not None:
+            self.labels = self.labels[:data_size]
 
     def __getitem__(self, index):
-        ret_image = Image.open(self.image_files[index % len(self.image_files)])
+        # Grab the image associated with the label at index idx
+        img_path = os.path.join(self.folder, self.labels["Image Name"][index])
+        image = read_image(img_path).to(device=device)
+        label = self.labels["Label"][index]
 
-        # Convert grayscale/rbg images to rgb
-        if ret_image.mode != "RGB":
-            ret_image = self.to_rgb(ret_image)
+        if self.transform is not None:
+            image = self.transform(image)
 
-        ret_image = self.transform(ret_image)
-        return {"x": ret_image, "y": self.image_labels[index % len(self.image_files)]}
+        return {"x":image, "y":label}
 
     def __len__(self):
-        return len(self.image_files)
+        return len(self.labels)
 
 
 class CNNModel(nn.Module):
-    def __init__(self, input_shape):
+    def __init__(self):
         super(CNNModel, self).__init__()
-        channels, height, width = input_shape
 
-        def cnn_block(in_filters, out_filters, normalize=True):
-            layers = list()
-            layers.append(nn.Conv2d(in_filters, out_filters, 5, stride=2, padding=1))
-            layers.append(nn.MaxPool2d(2, 2))
-            if normalize:
-                layers.append(nn.InstanceNorm2d(out_filters))
-            layers.append(nn.ReLU(inplace=True))
-            return layers
+        def new_shape_from_convpool(shape, conv: nn.Conv2d, pool: nn.MaxPool2d):
+            # Figure out the new shape from the conv and maxpool layers: https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html#torch.nn.Conv2d
+            shape = (
+            math.floor((shape[0] + 2 * conv.padding[0] - conv.dilation[0] * (conv.kernel_size[0] - 1) - 1) / conv.stride[0] + 1),
+            math.floor((shape[1] + 2 * conv.padding[1] - conv.dilation[1] * (conv.kernel_size[1] - 1) - 1) / conv.stride[1] + 1))
+            shape = (
+                math.floor((shape[0] + 2 * pool.padding - pool.dilation * (pool.kernel_size - 1) - 1) / pool.stride + 1),
+                math.floor((shape[1] + 2 * pool.padding - pool.dilation * (pool.kernel_size - 1) - 1) / pool.stride + 1)
+            )
+            return shape
 
-        self.model = nn.Sequential(
-            *cnn_block(channels, 64, normalize=False),
-            *cnn_block(64, 128),
-            nn.Flatten(),
-            nn.Linear(128*15*15, 64),
+        resized_shape = (256,256)
+        conv1 = nn.Conv2d(3, 64, 5, stride=2, padding=1)
+        pool1 = nn.MaxPool2d(2, stride=2)
+        shape = resized_shape
+
+        shape = new_shape_from_convpool(shape, conv1, pool1)
+        conv2 = nn.Conv2d(conv1.out_channels, 128, 5, stride=2, padding=1)
+        pool2 = nn.MaxPool2d(2, stride=2)
+        shape = new_shape_from_convpool(shape, conv2, pool2)
+
+        linear1 = nn.Linear(conv2.out_channels * shape[0] * shape[1], 64)
+        linear2 = nn.Linear(linear1.out_features, 5)
+
+        self.convolutions = nn.Sequential(
+            # Image transforms
+            transforms.Resize(resized_shape),
+            transforms.ConvertImageDtype(torch.float),
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+
+            conv1,
             nn.ReLU(inplace=True),
-            nn.Linear(64, 5),
+            pool1,
+            conv2,
+            nn.ReLU(inplace=True),
+            pool2,
+
+            nn.InstanceNorm2d(conv2.out_channels)
+        )
+
+        self.fc = nn.Sequential(
+            linear1,
+            nn.ReLU(inplace=True),
+            linear2,
             nn.ReLU(inplace=True),
         )
 
     def forward(self, img):
-        x = self.model(img)
+        x = self.convolutions(img)
+        # Flatten the cnn output. If there is a batch layer, then do not flatten that.
+        x = torch.flatten(x, start_dim=1 if len(x.shape) > 3 else 0)
+        x = self.fc(x)
         return x
 
 
-def train_test(csv_path='imageLabels.csv', batch_size=64, lr=0.0001,
-               epochs=100, save_path='cnn_model.pk', image_folder="image_demos",
-               data_size=100000):
-    dataset = pd.read_csv(csv_path, skiprows=1, header=None)
-    train_data, test_data = train_test_split(dataset, train_size=0.8)
-    transforms_ = [
-        transforms.Resize((256, 256), transforms.InterpolationMode.BICUBIC),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-    ]
-    train_dataloader = DataLoader(
-        ImageDataset(transforms_=transforms_,
-                     dataset=train_data,
-                     image_folder=image_folder,
-                     data_size=data_size),
-        batch_size=batch_size,
-        shuffle=True,
-    )
-    test_dataloader = DataLoader(
-        ImageDataset(transforms_=transforms_,
-                     dataset=test_data,
-                     image_folder=image_folder,
-                     data_size=data_size),
-        batch_size=batch_size,
-        shuffle=True,
-    )
+def train_test(csv_path='ImageLabels.csv', batch_size=64, lr=0.0001,
+               epochs=100, save_path='cnn_model.pk', image_folder="image_demos/", data_size=100000):
+    identifier = input("Identifier for this training run: ")
+    dataset = ImageDataset(image_folder=image_folder, annotations_file=csv_path, transforms_=None, data_size=data_size)
+    train_size = int(0.8 * len(dataset))
+    test_size = len(dataset) - train_size
 
-    input_size = (3, 256, 256)  # channel, width and height
-    model = CNNModel(input_size)
+    train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
+    model = CNNModel()
     if cuda or mps:
         model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.CrossEntropyLoss()
     train_loss, test_loss = 0.0, 0.0
     for epoch in range(epochs):
+        start = time.time()
         for i, batch in enumerate(train_dataloader):
-            x = torch.tensor(batch['x'], dtype=torch.float, device=device)
-            y = torch.tensor(batch['y'], dtype=torch.long, device=device)
+            x = batch["x"].to(device=device)
+            y = batch["y"].to(device=device, dtype=torch.long)
             optimizer.zero_grad()
             outputs = model(x)
             loss = loss_fn(outputs, y)
             loss.backward()
             optimizer.step()
             train_loss += loss.item()
-        print(f'[Epoch: {epoch + 1}] loss: {train_loss / i:.3f}')
+        print(f'[Epoch: {epoch + 1}] loss: {train_loss / i:.3f}, elapsed time: {time.time() - start:.2f} sec')
         train_loss = 0.0
     model.eval()
     correct = 0
     total = 0
     with torch.no_grad():
         for i, batch in enumerate(test_dataloader):
-            x = torch.tensor(batch['x'], dtype=torch.float, device=device, requires_grad=False)
-            y = torch.tensor(batch['y'], dtype=torch.long, device=device, requires_grad=False)
+            x = batch["x"].to(device=device)
+            y = batch["y"].to(device=device, dtype=torch.long)
+            # x = torch.tensor(batch['x'], dtype=torch.float, device=device, requires_grad=False)
+            # y = torch.tensor(batch['y'], dtype=torch.long, device=device, requires_grad=False)
             outputs = model(x)
             loss = loss_fn(outputs, y)
             test_loss += loss.item()
             _, predicted = torch.max(outputs.data, 1)
             correct += (predicted == y).sum().item()
             total += 1
-
-    print(f'Accuracy: {correct/total}')
+    accuracy = correct / total
+    print(f'Accuracy: {accuracy}')
+    scripted_model = torch.jit.script(model)
+    if not os.path.exists("./models/"):
+        os.makedirs("./models/")
+    save_path2 = f"./models/ak_{epochs}_{accuracy:.3f}_{identifier}.pt"
+    scripted_model.save(save_path2)
+    print("Saved JIT of model to " + save_path2)
     # Save model
     save_state = {
         'state_dict': model.state_dict(),
         'optimizer': optimizer.state_dict()
     }
-    torch.save(save_state, "./models/" + str(epochs) + "_" + save_path)
+    torch.save(save_state, "./models/" + str(epochs) + "_" + identifier + "_" + save_path)
 
 
 if __name__ == "__main__":

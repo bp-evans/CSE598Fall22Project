@@ -1,19 +1,16 @@
 import argparse
-from BCRRT import BCRRTAgent
-from RRTAgent import RRTAgent
-from ObstacleGame import ObstacleGame
 import time
 import uuid
 import os
-import pandas as pd
+import csv
 import pygame
 import random
-from Agents import Agent
 from RRTAgent import Observer
 from Configuration import StaticObstaclesConfiguration, DynamicObstaclesConfiguration
 from RRTAbstract import RRT_Core, RRTObserver
 import numpy as np
 from randomObs import setValsRandom
+
 
 def main(parsed_args):
     num_demos = int(parsed_args.n)
@@ -41,22 +38,21 @@ def main(parsed_args):
     # Grab current demonstration labels
     demonstration_label_file = "ImageLabels.csv"
     images_dir = "image_demos/"
-    try:
-        demonstration_labels = pd.read_csv(demonstration_label_file)
-    except FileNotFoundError:
-        # File doesn't exist, create a new dataset
-        demonstration_labels = pd.DataFrame({"Image Name": [], "Label": []})
+    exists = os.path.isfile(demonstration_label_file)
+    demonstration_labels = open(demonstration_label_file, 'a')
+    label_writer = csv.DictWriter(demonstration_labels, ["Image Name", "Label"])
+    if not exists:
+        label_writer.writeheader()
 
     if not os.path.exists(images_dir):
         os.makedirs(images_dir)
 
     # Run RRT
-
-    for i in range(0,num_demos):
+    for i in range(0, num_demos):
         print("Running RRT")
         rrt = RRT_Core([conf])
         graph, path = rrt.RRTAlg(10000, Observer(None, conf)) # change None to displayMap if you want to visualize the RRT
-    
+
         # Testing path contents
         print("Path Length:")
         print(len(path))
@@ -75,23 +71,17 @@ def main(parsed_args):
             new_conf.visualize(display_map)
             pygame.event.pump()
             filename = str(uuid.uuid1()) + ".jpg"
-            pygame.image.save(display_map, images_dir+filename)
+            pygame.image.save(display_map, images_dir + filename)
             # Save this label
-            if (not (x[1] == None)):
-                new_label = {"Image Name": [filename], "Label": [x[1].value]}
-            # demonstration_labels.iloc[len(demonstration_labels.index)] = [filename, action]
-            demonstration_labels = pd.concat([demonstration_labels, pd.DataFrame(new_label)])
-            # demonstration_labels.append(new_label, ignore_index=True)
+            if not (x[1] is None):
+                new_label = {"Image Name": filename, "Label": x[1].value}
+                label_writer.writerow(new_label)
             time.sleep(.05)
 
     print("Demos Ended")
-    
+
     # Save demonstrations
-    demonstration_labels.to_csv(demonstration_label_file)
-
-
-
-
+    demonstration_labels.close()
 
 
 if __name__ == "__main__":
@@ -100,7 +90,7 @@ if __name__ == "__main__":
         prog='RRT Demos',
         description='Run auto generated RRT demos')
 
-    parser.add_argument('-n')
+    parser.add_argument('-n', default=100)
     parser.add_argument('-d')
     args = parser.parse_args()
     main(args)
