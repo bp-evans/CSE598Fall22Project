@@ -1,7 +1,7 @@
 """
 This file can be run to let an expert play the game and will save the experts demonstrations
 """
-from ObstacleGame import ObstacleGame, DynamicObstacleGame
+from ObstacleGame import ObstacleGame
 import argparse
 import csv
 import keyboardAgents
@@ -34,7 +34,9 @@ def main(parsed_args):
     # Start up the game
     keyboard_agent = keyboardAgents.KeyboardAgent()
     if parsed_args.dynamic:
-        game = DynamicObstacleGame(keyboard_agent, parsed_args.collect)
+        print("Error, fix this")
+        exit(1)
+        # game = DynamicObstacleGame(keyboard_agent, parsed_args.collect)
     else:
         game = ObstacleGame(keyboard_agent, parsed_args.collect)
 
