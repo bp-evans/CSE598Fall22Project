@@ -8,3 +8,4 @@ AppleARM.md
 Papers/Baseline/.texpadtmp/
 /image_demos/
 ImageLabels.csv
+models/*.pk
