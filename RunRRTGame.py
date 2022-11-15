@@ -14,7 +14,12 @@ def main(parsed_args):
         print("Running game with a BC RRT agent using " + str(parsed_args.model) + " model.")
         rrt_agent = BCRRTAgent(parsed_args.model)
     game = ObstacleGame(rrt_agent)
-    game.play(visual=True)
+    if int(parsed_args.d) == 1:
+        print("Dynamic Obs Game")
+        game.play(isDynamic = True, visual=True)
+    else:
+        print("Static Obs Game")
+        game.play(isDynamic = False, visual = True)
 
 
 if __name__ == "__main__":
@@ -25,5 +30,6 @@ if __name__ == "__main__":
 
     parser.add_argument('-bc', '--behavior_cloning', action='store_true')
     parser.add_argument('-m', '--model', type=str, help="The model file name to use.", default=DeveloperName.my_name + 'model.pk')
+    parser.add_argument('-d')
     args = parser.parse_args()
     main(args)

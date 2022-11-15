@@ -6,6 +6,7 @@ import pygame
 import random
 from Agents import Agent
 from Configuration import StaticObstaclesConfiguration, DynamicObstaclesConfiguration
+from randomObs import setValsRandom
 
 
 class ObstacleGame:
@@ -32,7 +33,7 @@ class ObstacleGame:
 
         self.display_map = pygame.display.set_mode((mapw, maph))  # setting up pygame window of proper dimensions
 
-    def play(self, visual=True):
+    def play(self, isDynamic, visual=True):
         """
         Plays the game.
         Starts a game loop where every iteration the agent is queried for an action. The action that
@@ -42,7 +43,15 @@ class ObstacleGame:
         """
 
         # Begin with some configuration
-        conf = StaticObstaclesConfiguration((50, 50), (800, 300))
+        if(isDynamic):
+            print("Dynamic")
+            goalx = random.randint(200,800)
+            goaly = random.randint(0,500)
+            goal = (goalx, goaly)
+            setValsRandom(goal)
+            conf = DynamicObstaclesConfiguration((50,50), goal)
+        else:
+            conf = StaticObstaclesConfiguration((50, 50), (800, 300))
 
         # Grab current demonstration labels
         demonstration_label_file = "ImageLabels.csv"
