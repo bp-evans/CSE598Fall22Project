@@ -4,12 +4,55 @@ import uuid
 import os
 import csv
 import pygame
-import random
-from RRTAgent import Observer
 from Configuration import StaticObstaclesConfiguration, DynamicObstaclesConfiguration
-from RRTAbstract import RRT_Core, RRTObserver
-import numpy as np
-from randomObs import setValsRandom
+from RRTAbstract import RRT_Core
+import multiprocessing as mp
+from itertools import chain
+from functools import partial
+
+
+def record_image_for(conf: StaticObstaclesConfiguration, action, images_dir) -> (str, "DiscreteDirectionAction"):
+    """
+    Records an image for a configuration and action
+    :param images_dir:
+    :param action:
+    :param conf:
+    :return: The action that should be taken from this image
+    """
+    pygame.init()
+    pygame.display.set_mode((100,100))
+    surface = pygame.Surface((conf.mapw, conf.maph))
+    conf.visualize(surface)
+    filename = str(uuid.uuid1()) + ".jpg"
+    pygame.image.save(surface, images_dir + filename)
+    return filename, action
+
+
+def run_demo(i, conf_type, images_dir):
+    """
+    Generates 1 demo and all the data points associated with it
+    :return:
+    """
+    # Generate a random start conf
+    start = conf_type.gen_random_conf(set_goal=(700,200))
+    # Run RRT
+    print(f"Running RRT for iter {i}")
+    rrt = RRT_Core([start])
+    graph, path = rrt.RRTAlg(2000, None, always_return_path=True)  # change None to an observer with a displayMap if you want to visualize the RRT
+
+    # Testing path contents
+    print("Path Length:")
+    print(len(path), "\n")
+
+    # Generate image for all confs on path
+    print(f"Visualizing {len(path)} state(s)")
+    labels = []
+    for node, action in path:
+        labels.append(record_image_for(node, action, images_dir))
+    # labels = map(lambda x: record_image_for(x[0], x[1], images_dir), path)
+    # labels = worker_pool.starmap(partial(record_image_for, images_dir=images_dir), path)
+
+    return labels
 
 
 def main(parsed_args):
@@ -20,20 +63,17 @@ def main(parsed_args):
     StaticObstaclesConfiguration.mapw = mapw
     StaticObstaclesConfiguration.maph = maph
 
-    display_map = pygame.display.set_mode((mapw, maph))
 
-    goal = (800, 300) # change this later
+    # display_map = pygame.display.set_mode((mapw, maph))
+
+    # goal = (800, 300) # change this later
 
     if parsed_args.d:
         print("Dynamic Mode")
-        goalx = random.randint(200,800)
-        goaly = random.randint(0,500)
-        goal = (goalx, goaly)
-        setValsRandom(goal) # set goal for randomObs
-        conf = DynamicObstaclesConfiguration((50, 50), goal)
+        conf_type = DynamicObstaclesConfiguration
     else:
         print("Static Mode")
-        conf = StaticObstaclesConfiguration((50, 50), goal)
+        conf_type = StaticObstaclesConfiguration
 
     # Grab current demonstration labels
     demonstration_label_file = "ImageLabels.csv"
@@ -47,41 +87,30 @@ def main(parsed_args):
     if not os.path.exists(images_dir):
         os.makedirs(images_dir)
 
-    # Run RRT
-    for i in range(0, num_demos):
-        print("Running RRT")
-        rrt = RRT_Core([conf])
-        graph, path = rrt.RRTAlg(10000, Observer(None, conf)) # change None to displayMap if you want to visualize the RRT
+    # Set up a queue to handle writing outputs, images can be written without conflict by each process
+    # However, the label file needs to be synchronized
 
-        # Testing path contents
-        print("Path Length:")
-        print(len(path))
-        print("")
+    # Run all the demos in a worker pool
+    start = time.time()
+    pool = mp.Pool(processes=None)
 
-        # Graphics loop
-        print("Visualizing game state")
-        # Loops through path to goal showing agent position and saving screenshots with action information
-        for x in path:
-            vec = x[0].as_vector()
-            if(int(parsed_args.d) == 1):
-                new_conf = DynamicObstaclesConfiguration((vec[0], vec[1]), goal)
-            else:
-                new_conf = StaticObstaclesConfiguration((vec[0], vec[1]), goal)
+    labels = pool.map(partial(run_demo, conf_type=conf_type, images_dir=images_dir), range(num_demos))
 
-            new_conf.visualize(display_map)
-            pygame.event.pump()
-            filename = str(uuid.uuid1()) + ".jpg"
-            pygame.image.save(display_map, images_dir + filename)
-            # Save this label
-            if not (x[1] is None):
-                new_label = {"Image Name": filename, "Label": x[1].value}
-                label_writer.writerow(new_label)
-            time.sleep(.05)
+    print("Finished generating images, saving labels")
 
-    print("Demos Ended")
+    i = 0
+    for (image, label) in chain.from_iterable(labels):
+        if label is not None:
+            new_label = {"Image Name": image, "Label": label.value}
+            label_writer.writerow(new_label)
+            i += 1
 
     # Save demonstrations
     demonstration_labels.close()
+
+    end = time.time()
+
+    print(f"Saved {i} labels\n\nFinished in {end-start:.2f} seconds")
 
 
 if __name__ == "__main__":

@@ -1,17 +1,13 @@
 import math
 import numbers
-
 import numpy as np
 from abc import ABC, abstractmethod
 from enum import Enum
-
 import pygame
 import random
-
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Iterable
 from Visualizers import visualize_conf
 
-from randomObs import genRandomObs
 
 """
 Use `Configuration` in all code references, but instantiate `StaticObstaclesConfiguration` to begin with.
@@ -63,13 +59,19 @@ class Configuration(ABC):
     @abstractmethod
     def gen_random_conf() -> "Configuration":
         """
-        Generates a random _valid_ configuration
+        Generates a completely random _valid_ configuration
         :return:
         """
         pass
 
+    def randomized_agent(self) -> "Configuration":
+        """
+        Returns a configuration the same as self but with just the agent's state randomized
+        :return:
+        """
+
     @abstractmethod
-    def nearest_vertex(self, vertices: "Configuration") -> "Configuration":
+    def nearest_vertex(self, vertices: List["Configuration"]) -> "Configuration":
         """
         Returns the vertex in the list of vertices that is closest to this one.
         :param vertices:
@@ -78,7 +80,7 @@ class Configuration(ABC):
         pass
 
     @abstractmethod
-    def new_conf_from(self, near: "Configuration", delta) -> "Configuration":
+    def new_conf_from(self, near: "Configuration") -> "Configuration":
         """
         Returns a new configuration object that is delta away from "near" conf _towards_ this conf.
         Would also probably need to store the parent and action associated to get this.
@@ -142,18 +144,31 @@ class DiscreteDirectionAction(Action, Enum):
             return np.array([0, 0])
 
 
-class ObstaclesConfiguration(Configuration):
+class StaticObstaclesConfiguration(Configuration):
     """
     Configuration for a game where the obstacles are static.
     """
     mapw = 800
     maph = 500
 
-    @abstractmethod
-    def obstacles(self) -> ["Obstacle"]:
-        pass
+    @staticmethod
+    def gen_obstacles(within: Tuple[int, int], valid_fn) -> List["Obstacle"]:
+        """
+        Generate an obstacle list when requested
+        :return:
+        """
+        return [(100, 0, 30, 200),
+                (50, 350, 30, 30),
+                (250, 300, 30, 200),
+                (250, 0, 30, 150),
+                (450, 0, 30, 400),
+                (550, 200, 30, 30),
+                (575, 400, 30, 30),
+                (650, 300, 30, 30),
+                (650, 70, 30, 30)
+                ]
 
-    def __init__(self, agent: (float, float), goal: (float, float)):
+    def __init__(self, agent: Iterable[float], goal: Iterable[float], obstacles: Optional[List["Obstacles"]] = None):
         """
 
         :param agent:
@@ -164,9 +179,14 @@ class ObstaclesConfiguration(Configuration):
         self.goal = np.array(list(goal))
         self.parent_vector = None
         self.max_obs = 15
-        self.obstacle_list = self.obstacles()
-        # passing in obstacles from the abstract runner
-        pass
+
+        def valid(obs):
+            self.obstacle_list = obs
+            return self.is_valid_conf()
+        # Get valid obstacles
+        self.obstacle_list = self.gen_obstacles(
+            within=(StaticObstaclesConfiguration.mapw, StaticObstaclesConfiguration.maph),
+            valid_fn=valid) if obstacles is None else obstacles
 
     def is_valid_conf(self) -> bool:
         """
@@ -178,7 +198,8 @@ class ObstaclesConfiguration(Configuration):
         return True
 
     def get_legal_actions(self) -> [DiscreteDirectionAction]:
-        return list(filter(lambda c: self.take_action(c).is_valid_conf(), [DiscreteDirectionAction(i) for i in range(1, 5)]))
+        return list(
+            filter(lambda c: self.take_action(c).is_valid_conf(), [DiscreteDirectionAction(i) for i in range(1, 5)]))
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal
@@ -187,7 +208,7 @@ class ObstaclesConfiguration(Configuration):
     def dist_to_terminal(self) -> numbers.Real:
         return np.linalg.norm(self.goal - self.agent)
 
-    def get_parent_vector(self) -> Optional[Tuple["ObstaclesConfiguration", DiscreteDirectionAction]]:
+    def get_parent_vector(self) -> Optional[Tuple["StaticObstaclesConfiguration", DiscreteDirectionAction]]:
         return self.parent_vector
 
     def as_vector(self) -> np.ndarray:
@@ -195,18 +216,27 @@ class ObstaclesConfiguration(Configuration):
         return np.append(self.agent, self.goal)
 
     @classmethod
-    def gen_random_conf(cls) -> "ObstaclesConfiguration":
+    def gen_random_conf(cls, set_goal: Optional[Iterable[float]] = None,
+                        set_obstacles: Optional[List["Obstacle"]] = None) -> "StaticObstaclesConfiguration":
         # This should only return a VALID conf
 
         valid = False
         while not valid:
             x = np.random.uniform(0, StaticObstaclesConfiguration.mapw)
             y = np.random.uniform(0, StaticObstaclesConfiguration.maph)
-            ret_config = cls((x, y), (0, 0))  # Goal is weird, but doesn't really matter
+            if set_goal is None:
+                set_goal = [0, 0]
+                set_goal[0] = np.random.uniform(0,StaticObstaclesConfiguration.mapw)
+                set_goal[1] = np.random.uniform(0, StaticObstaclesConfiguration.maph)
+
+            ret_config = cls((x, y), set_goal, set_obstacles)  # Goal is weird, but doesn't really matter
             valid = ret_config.is_valid_conf()
         return ret_config
 
-    def nearest_vertex(self, vertices: List["ObstaclesConfiguration"]) -> "ObstaclesConfiguration":
+    def randomized_agent(self) -> "StaticObstaclesConfiguration":
+        return self.gen_random_conf(set_goal=self.goal, set_obstacles=self.obstacle_list)
+
+    def nearest_vertex(self, vertices: List["StaticObstaclesConfiguration"]) -> "StaticObstaclesConfiguration":
         dmin = 999
         near = None
         for vertex in vertices:
@@ -216,7 +246,7 @@ class ObstaclesConfiguration(Configuration):
                 dmin = dist
         return near
 
-    def new_conf_from(self, near: "ObstaclesConfiguration") -> Optional["ObstaclesConfiguration"]:
+    def new_conf_from(self, near: "StaticObstaclesConfiguration") -> Optional["StaticObstaclesConfiguration"]:
         # Should only return a VALID conf where the parent, and action are set on this conf already
         diff = self.agent - near.agent
         theta = math.atan2(diff[1], diff[0])
@@ -242,7 +272,7 @@ class ObstaclesConfiguration(Configuration):
 
         # Check to make sure this doesn't cross an obstacle
         diff = new.agent - near.agent
-        for o in new.obstacles():
+        for o in new.obstacle_list:
             obstacle = pygame.Rect(o)
             prev = None
             for i in range(101):
@@ -260,13 +290,14 @@ class ObstaclesConfiguration(Configuration):
 
         return new
 
-    def take_action(self, action: DiscreteDirectionAction, step_dist=10) -> "ObstaclesConfiguration":
+    def take_action(self, action: DiscreteDirectionAction, step_dist=10) -> "StaticObstaclesConfiguration":
         # Returns the conf that results from taking an action
-        new_conf = type(self)(self.agent + (step_dist * action.direction_vector()), self.goal)
+        # Goal and obstacles remain the same
+        new_conf = type(self)(self.agent + (step_dist * action.direction_vector()), self.goal, self.obstacle_list)
         return new_conf
 
     def visualize(self, display_map):
-        visualize_conf(display_map, self.agent, self.goal, self.obstacles())
+        visualize_conf(display_map, self.agent, self.goal, self.obstacle_list)
         pass
 
     def get_obs_vector(self):
@@ -275,32 +306,33 @@ class ObstaclesConfiguration(Configuration):
                          [(0, 0, 0, 0) for _ in range(self.max_obs - len(self.obstacle_list))])
 
 
-class StaticObstaclesConfiguration(ObstaclesConfiguration):
-    def obstacles(self) -> ["Obstacles"]:
-        """
-        Stores the obstacles, returns a list of the obstacles
-        :return:
-        """
-        return [(100, 0, 30, 200),
-                (50, 350, 30, 30),
-                (250, 300, 30, 200),
-                (250, 0, 30, 150),
-                (450, 0, 30, 400),
-                (550, 200, 30, 30),
-                (575, 400, 30, 30),
-                (650, 300, 30, 30),
-                (650, 70, 30, 30)
-                ]
-
-
-class DynamicObstaclesConfiguration(ObstaclesConfiguration):
+class DynamicObstaclesConfiguration(StaticObstaclesConfiguration):
     """
     Configuration for a game where the obstacles are static.
     """
-    # static random obstacles variable
-    obstacles_dynamic = genRandomObs() # static var set to random list generated by genRandomObs in randomObs.py
-    
-    
-    def obstacles(self) -> ["Obstacles"]:
-        return self.obstacles_dynamic
+    @staticmethod
+    def gen_obstacles(within: (int, int), valid_fn) -> List["Obstacle"]:
+        window = within
 
+        obstacle_count = random.randint(6, 15)
+
+        # rect (left, top, width, height)
+        obstacle_list = list()
+        while len(obstacle_list) < obstacle_count:
+            top = random.randint(10, window[1] - 1)
+            left = random.randint(10, window[0] - 1)
+            height = random.randint(80, window[1])
+            width = 30
+
+            skip_this = False
+            rect = pygame.Rect(left - 15, top - 15, width + 30, height + 30)
+
+            if not valid_fn(obstacle_list + [(left, top, width, height)]):
+                skip_this = True
+            for l, t, w, h in obstacle_list:
+                if rect.colliderect(pygame.Rect(l, t, w, h)):
+                    skip_this = True
+                    break
+            if not skip_this:
+                obstacle_list.append((left, top, width, height))
+        return obstacle_list
