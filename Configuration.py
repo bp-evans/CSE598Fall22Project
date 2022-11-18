@@ -216,20 +216,26 @@ class StaticObstaclesConfiguration(Configuration):
         return np.append(self.agent, self.goal)
 
     @classmethod
-    def gen_random_conf(cls, set_goal: Optional[Iterable[float]] = None,
+    def gen_random_conf(cls, set_start:Optional[Iterable[float]] = None, set_goal: Optional[Iterable[float]] = None,
                         set_obstacles: Optional[List["Obstacle"]] = None) -> "StaticObstaclesConfiguration":
         # This should only return a VALID conf
 
         valid = False
         while not valid:
-            x = np.random.uniform(0, StaticObstaclesConfiguration.mapw)
-            y = np.random.uniform(0, StaticObstaclesConfiguration.maph)
+            if set_start is None:
+                x = np.random.uniform(0, StaticObstaclesConfiguration.mapw)
+                y = np.random.uniform(0, StaticObstaclesConfiguration.maph)
+                start = (x,y)
+            else:
+                start = set_start
             if set_goal is None:
-                set_goal = [0, 0]
-                set_goal[0] = np.random.uniform(0,StaticObstaclesConfiguration.mapw)
-                set_goal[1] = np.random.uniform(0, StaticObstaclesConfiguration.maph)
+                goal = [0, 0]
+                goal[0] = np.random.uniform(0,StaticObstaclesConfiguration.mapw)
+                goal[1] = np.random.uniform(0, StaticObstaclesConfiguration.maph)
+            else:
+                goal = set_goal
 
-            ret_config = cls((x, y), set_goal, set_obstacles)  # Goal is weird, but doesn't really matter
+            ret_config = cls(start, goal, set_obstacles)  # Goal is weird, but doesn't really matter
             valid = ret_config.is_valid_conf()
         return ret_config
 

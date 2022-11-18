@@ -43,11 +43,11 @@ class ObstacleGame:
 
         # Begin with some configuration
         if(isDynamic):
-            print("Dynamic")
-            # TODO: Evalute whether the goal should be random too?
-            conf = DynamicObstaclesConfiguration.gen_random_conf(set_goal=(800,300))
+            print("Dynamic Obstacles")
+            conf = DynamicObstaclesConfiguration.gen_random_conf()
         else:
-            conf = StaticObstaclesConfiguration((50, 50), (800, 300))
+            print("Static Obstacles")
+            conf = StaticObstaclesConfiguration.gen_random_conf()
 
         # Grab current demonstration labels
         demonstration_label_file = "ImageLabels.csv"
