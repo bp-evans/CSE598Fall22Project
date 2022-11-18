@@ -50,13 +50,11 @@ def visualize_conf(display_map: Union[pygame.Surface, pygame.SurfaceType], agent
 
     display_map.fill((255, 255, 255))
 
-    # print("Drawing objects")
-
-    pygame.draw.circle(display_map, Color.green.value(), agent, nodeRad + 5, 0)
-    pygame.draw.circle(display_map, Color.purple.value(), goal, nodeRad + 20, 1)
+    pygame.draw.circle(display_map, Color.green.value(), agent, nodeRad + 10, 0)
+    pygame.draw.circle(display_map, Color.red.value(), goal, nodeRad + 15, 0)
 
     for obstacle in obstacles:
-        pygame.draw.rect(display_map, Color.grey.value(), obstacle)
+        pygame.draw.rect(display_map, Color.blue.value(), obstacle)
 
     pygame.display.update()
     pass
