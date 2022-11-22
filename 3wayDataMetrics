@@ -1,0 +1,15 @@
+Count of True Values in RRT: 81
+Count of False Values in RRT: 19
+The RRT success rate is: 0.81
+Count of True Values in BCRRT: 248
+Count of False Values in BCRRT: 20
+The BCRRT success rate is: 0.93
+Count of True Values in IMGBCRRT: 138
+Count of False Values in IMGBCRRT: 17
+The IMGBCRRT success rate is: 0.89
+RRT Time - Mean: 3.5861234881661157 Std. Dev: 1.1871697734122462
+BCRRT Time - Mean: 1.4800022996766737 Std. Dev: 1.3829754968114756
+IMGBCRRT Time - Mean: 2.8453655800262054 Std. Dev: 1.2128661779912198
+RRT Expansion - Mean: 752.03 Std. Dev: 202.2828030857849
+BCRRT Expansion - Mean: 306.44029850746267 Std. Dev: 339.1518284109893
+IMGBCRRT Expansion - Mean: 577.6064516129032 Std. Dev: 299.53701279813225
