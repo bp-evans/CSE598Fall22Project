@@ -77,8 +77,8 @@ def main(parsed_args):
         conf_type = StaticObstaclesConfiguration
 
     # Grab current demonstration labels
-    demonstration_label_file = "ImageLabels.csv"
-    images_dir = "image_demos/"
+    demonstration_label_file = "ImageLabels_Static_BC.csv"
+    images_dir = "image_demos_imagebc_static/"
     exists = os.path.isfile(demonstration_label_file)
     demonstration_labels = open(demonstration_label_file, 'a')
     label_writer = csv.DictWriter(demonstration_labels, ["Image Name", "Label"])
