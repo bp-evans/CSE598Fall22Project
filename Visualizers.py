@@ -19,6 +19,7 @@ class Color(Enum):
     red = 4
     white = 5
     purple = 6
+    black = 7
 
     def value(self) -> Tuple[int, int, int]:
         if self == Color.grey:
@@ -33,6 +34,8 @@ class Color(Enum):
             return (255, 255, 255)
         if self == Color.purple:
             return (255, 0, 255)
+        if self == Color.black:
+            return 0, 0, 0
         else:
             return 0, 0, 0
 
@@ -48,7 +51,7 @@ def visualize_conf(display_map: Union[pygame.Surface, pygame.SurfaceType], agent
     :return:
     """
 
-    display_map.fill((255, 255, 255))
+    display_map.fill(Color.black.value())
 
     pygame.draw.circle(display_map, Color.green.value(), agent, nodeRad + 10, 0)
     pygame.draw.circle(display_map, Color.red.value(), goal, nodeRad + 15, 0)

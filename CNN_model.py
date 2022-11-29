@@ -158,7 +158,7 @@ def train_test(csv_path='ImageLabels_Static_BC.csv', batch_size=64, lr=0.0001,
     scripted_model = torch.jit.script(model)
     if not os.path.exists("./models/"):
         os.makedirs("./models/")
-    save_path2 = f"./models/ts_{epochs}_{accuracy:.3f}_{identifier}.pt"
+    save_path2 = f"./models/ts_{epochs}_{identifier}_{accuracy:.3f}.pt"
     scripted_model.save(save_path2)
     print("Saved JIT of model to " + save_path2)
     # Save model
@@ -178,5 +178,6 @@ if __name__ == "__main__":
                         default=100, help='number of epochs to train')
     parser.add_argument('-s', '--data_size', action='store', type=int,
                         default=100000, help='max number of training examples')
+    parser.add_argument('-l', '--dataset_label', help="The label of the dataset to use", default="")
     args = parser.parse_args()
-    train_test(epochs=args.epochs, data_size=args.data_size)
+    train_test(csv_path=f"{args.dataset_label}ImageLabels.csv", image_folder=f"{args.dataset_label}{'_' if not args.dataset_label == '' else ''}image_demos", epochs=args.epochs, data_size=args.data_size)
