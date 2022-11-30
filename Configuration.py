@@ -125,11 +125,11 @@ class Configuration(ABC):
 
 
 class DiscreteDirectionAction(Action, Enum):
-    NORTH = 1
-    SOUTH = 3
-    EAST = 2
-    WEST = 4
-    STOP = 0
+    NORTH = 0
+    SOUTH = 2
+    EAST = 1
+    WEST = 3
+    STOP = -1
 
     def direction_vector(self) -> np.ndarray:
         if self == DiscreteDirectionAction.NORTH:
@@ -199,7 +199,7 @@ class StaticObstaclesConfiguration(Configuration):
 
     def get_legal_actions(self) -> [DiscreteDirectionAction]:
         return list(
-            filter(lambda c: self.take_action(c).is_valid_conf(), [DiscreteDirectionAction(i) for i in range(1, 5)]))
+            filter(lambda c: self.take_action(c).is_valid_conf(), [DiscreteDirectionAction(i) for i in range(0, 4)]))
 
     def is_terminal(self) -> bool:
         # Is terminal if the agent is close enough to the goal

@@ -74,7 +74,7 @@ class CNNModel(nn.Module):
         shape = new_shape_from_convpool(shape, conv2, pool2)
 
         linear1 = nn.Linear(conv2.out_channels * shape[0] * shape[1], 64)
-        linear2 = nn.Linear(linear1.out_features, 5)
+        linear2 = nn.Linear(linear1.out_features, 4)
 
         self.convolutions = nn.Sequential(
             # Image transforms

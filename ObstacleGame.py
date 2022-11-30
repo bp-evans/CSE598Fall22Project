@@ -32,7 +32,7 @@ class ObstacleGame:
 
         self.display_map = pygame.display.set_mode((mapw, maph))  # setting up pygame window of proper dimensions
 
-    def play(self, isDynamic, visual=True):
+    def play(self, isDynamic, visual=True, dyn_start=False, dyn_goal=False):
         """
         Plays the game.
         Starts a game loop where every iteration the agent is queried for an action. The action that
@@ -44,11 +44,12 @@ class ObstacleGame:
         # Begin with some configuration
         if(isDynamic):
             print("Dynamic Obstacles")
-            conf = DynamicObstaclesConfiguration.gen_random_conf()
+            _conft = DynamicObstaclesConfiguration
         else:
             print("Static Obstacles")
-            conf = StaticObstaclesConfiguration.gen_random_conf()
+            _conft = StaticObstaclesConfiguration
 
+        conf = _conft.gen_random_conf(set_start=None if dyn_start else (50, 50), set_goal=None if dyn_goal else (700, 200))
         # Grab current demonstration labels
         demonstration_label_file = "ImageLabels.csv"
         images_dir = "image_demos/"

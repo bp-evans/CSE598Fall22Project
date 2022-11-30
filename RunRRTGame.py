@@ -20,10 +20,10 @@ def main(parsed_args):
     game = ObstacleGame(rrt_agent)
     if parsed_args.dynamic:
         print("Dynamic Obs Game")
-        game.play(isDynamic = True, visual=True)
+        game.play(isDynamic=True, visual=True, dyn_start=parsed_args.ds, dyn_goal=parsed_args.dg)
     else:
         print("Static Obs Game")
-        game.play(isDynamic = False, visual = True)
+        game.play(isDynamic=False, visual=True, dyn_start=parsed_args.ds, dyn_goal=parsed_args.dg)
 
 
 if __name__ == "__main__":
@@ -33,8 +33,12 @@ if __name__ == "__main__":
         description='Run the game and traverse')
 
     parser.add_argument('-bc', '--behavior_cloning', action='store_true')
-    parser.add_argument('-img', '--image_model', help="Whether to run in image JIT model mode or not", action='store_true')
-    parser.add_argument('-m', '--model', type=str, help="The model file name to use.", default=DeveloperName.my_name + 'model.pk')
+    parser.add_argument('-img', '--image_model', help="Whether to run in image JIT model mode or not",
+                        action='store_true')
+    parser.add_argument('-m', '--model', type=str, help="The model file name to use.",
+                        default=DeveloperName.my_name + 'model.pk')
     parser.add_argument('-d', '--dynamic', action='store_true')
+    parser.add_argument('-ds', help="Use Dynamic Start", action='store_true')
+    parser.add_argument('-dg', help="Use Dynamic Goal", action='store_true')
     args = parser.parse_args()
     main(args)

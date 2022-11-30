@@ -10,6 +10,7 @@ import multiprocessing as mp
 from itertools import chain
 from functools import partial
 from typing import Dict, Any
+from time import sleep
 
 
 def record_image_for(conf: StaticObstaclesConfiguration, action, images_dir) -> (str, "DiscreteDirectionAction"):
@@ -77,8 +78,8 @@ def main(parsed_args):
         conf_type = StaticObstaclesConfiguration
 
     # Grab current demonstration labels
-    demonstration_label_file = "ImageLabels_Static_BC.csv"
-    images_dir = "image_demos_imagebc_static/"
+    demonstration_label_file = f"{parsed_args.label}ImageLabels.csv"
+    images_dir = f"{parsed_args.label}_image_demos/"
     exists = os.path.isfile(demonstration_label_file)
     demonstration_labels = open(demonstration_label_file, 'a')
     label_writer = csv.DictWriter(demonstration_labels, ["Image Name", "Label"])
@@ -95,12 +96,16 @@ def main(parsed_args):
     start = time.time()
     pool = mp.Pool(processes=None)
 
-    use_dynamic_start = True  # input("Use dynamic start? (y/n)") == "y"
+    # Wait for pygame to start up so the welcome messages don't drown out the following input requests
+    sleep(1)
+
+    use_dynamic_start = input("Use dynamic start? (y/n)") == "y"
+    use_dynamic_goal = input("Use dynamic goal? (y/n)") == "y"
 
     parameters = {
         "images_dir": images_dir,
         "start": None if use_dynamic_start else (50, 50),
-        "goal": None  # (700,200)
+        "goal": None if use_dynamic_goal else (700, 200)
     }
 
     labels = pool.map(partial(run_demo, conf_type=conf_type, parameters=parameters), range(num_demos))
@@ -130,5 +135,6 @@ if __name__ == "__main__":
 
     parser.add_argument('-n', help="The number of demonstrations to run", default=100)
     parser.add_argument('-d', help="Use this flag to indicate the obstacles should be dynamic", action='store_true')
+    parser.add_argument('-l', '--label', help="Label for this run", default='')
     args = parser.parse_args()
     main(args)
