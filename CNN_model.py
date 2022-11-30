@@ -107,8 +107,8 @@ class CNNModel(nn.Module):
         return x
 
 
-def train_test(csv_path='ImageLabels_Static_BC.csv', batch_size=64, lr=0.0001,
-               epochs=100, save_path='cnn_model.pk', image_folder="image_demos_imagebc_static/", data_size=100000):
+def train_test(csv_path='ImageLabels.csv', batch_size=64, lr=0.0001,
+               epochs=100, save_path='cnn_model.pk', image_folder="image_demos/", data_size=100000):
     identifier = input("Identifier for this training run: ")
     dataset = ImageDataset(image_folder=image_folder, annotations_file=csv_path, transforms_=None, data_size=data_size)
     train_size = int(0.8 * len(dataset))
