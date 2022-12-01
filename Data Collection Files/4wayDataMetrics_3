@@ -1,0 +1,22 @@
+C:\Users\braed\anaconda3\python.exe C:/Users/braed/Documents/GitHub/CSE598Fall22Project/metricDataVis.py
+Count of True Values in BCRRT: 248
+Count of False Values in BCRRT: 20
+The BCRRT success rate is: 0.93
+Count of True Values in IMGBCRRT_SA: 116
+The IMGBCRRT_SA success rate is: 1.0
+Count of True Values in IMGBCRRT_SDO: 147
+Count of False Values in IMGBCRRT_SDO: 6
+The IMGBCRRT_SDO success rate is: 0.96
+Count of True Values in IMGBCRRT_DA: 155
+Count of False Values in IMGBCRRT_DA: 10
+The IMGBCRRT_DA  success rate is: 0.94
+BCRRT Time - Mean: 1.4800022996766737 Std. Dev: 1.3829754968114756
+IMGBCRRT_SA Time - Mean: 0.8970993560293447 Std. Dev: 0.12376786765509867
+IMGBCRRT_SDO Time - Mean: 3.020866367377733 Std. Dev: 1.4909113280024315
+IMGBCRRT_DA Time - Mean: 3.0204312932200548 Std. Dev: 1.4275093146064353
+BCRRT Expansion - Mean: 306.44029850746267 Std. Dev: 339.1518284109893
+IMGBCRRT_SA Expansion - Mean: 16.74137931034483 Std. Dev: 54.46899727522009
+IMGBCRRT_SDO Expansion - Mean: 487.8954248366013 Std. Dev: 281.11259598898624
+IMGBCRRT_DA Expansion - Mean: 486.3333333333333 Std. Dev: 255.80724291633192
+
+Process finished with exit code 0
