@@ -56,8 +56,8 @@ print("The IMGBCRRT_SA success rate is:", round((successesIMGBCRRT_SA / rowIMGBC
 successesIMGBCRRT_SDO = dfIMGBCRRT_SDO['success'].value_counts()[True]
 print('Count of True Values in IMGBCRRT_SDO:', successesIMGBCRRT_SDO)
 
-failuresIMGBCRRT_SDO = dfIMGBCRRT_SDO['success'].value_counts()[False]
-print('Count of False Values in IMGBCRRT_SDO:', failuresIMGBCRRT_SDO)
+#failuresIMGBCRRT_SDO = dfIMGBCRRT_SDO['success'].value_counts()[False]
+#print('Count of False Values in IMGBCRRT_SDO:', failuresIMGBCRRT_SDO)
 
 print("The IMGBCRRT_SDO success rate is:", round((successesIMGBCRRT_SDO / rowIMGBCRRT_SDOCount), 2))
 
@@ -92,13 +92,13 @@ print("IMGBCRRT_DA Time - Mean: "+str(timeDiffIMGBCRRT_DA.mean())+" Std. Dev: "+
 
 ################################################################################
 # Create Box Plot of Time Data
-sns.boxplot(data = [timeDiffBCRRT,timeDiffIMGBCRRT_SA,timeDiffIMGBCRRT_SDO,timeDiffIMGBCRRT_DA]).set(xlabel="Algorithm", ylabel="Time to Terminal")
+sns.boxplot(data = [timeDiffBCRRT,timeDiffIMGBCRRT_SA,timeDiffIMGBCRRT_SDO,timeDiffIMGBCRRT_DA]).set(xlabel="Algorithm", ylabel="Time to Terminal", xticks=([0, 1, 2, 3]), xticklabels = (['BCRRT', 'IMGBCRRT_SA', 'IMGBCRRT_SDO', 'IMGBCRRT_DA']))
 #ax = plt.axes()
-plt.title('BCRRT vs IMGBCRRT_SA vs IMGBCRRT_SDO vs IMGBCRRT_DA: Time to Goal')
+plt.title('Time to Goal')
 #ax.set_xticklabels(["BCRRT","IMGBCRRT_SA","IMGBCRRT_SDO","IMGBCRRT_DA"])
 plt.show()
 
-####################################################################################
+######################################################################################
 # BCRRT Expansion Data
 expansionDataBCRRT = dfBCRRT['expansions']
 print("BCRRT Expansion - Mean: "+str(expansionDataBCRRT.mean())+" Std. Dev: "+str(expansionDataBCRRT.std()))
@@ -117,8 +117,7 @@ print("IMGBCRRT_DA Expansion - Mean: "+str(expansionDataIMGBCRRT_DA.mean())+" St
 
 #############################################################
 # Create Box Plot of Expansion Data
-sns.boxplot(data = [expansionDataBCRRT,expansionDataIMGBCRRT_SA,expansionDataIMGBCRRT_SDO,expansionDataIMGBCRRT_DA]).set(xlabel="Algorithm", ylabel="Expansions")
-#ax = plt.axes()
-plt.title('BCRRT vs IMGBCRRT_SA vs IMGBCRRT_SDO vs IMGBCRRT_DA: Expansions')
-#ax.set_xticklabels(["BCRRT","IMGBCRRT_SA","IMGBCRRT_SDO","IMGBCRRT_DA"])
+ax = sns.boxplot(data = [expansionDataBCRRT,expansionDataIMGBCRRT_SA,expansionDataIMGBCRRT_SDO,expansionDataIMGBCRRT_DA])\
+    .set(xlabel="Algorithm", ylabel="Expansions", xticks=([0, 1, 2, 3]), xticklabels = (['BCRRT', 'IMGBCRRT_SA', 'IMGBCRRT_SDO', 'IMGBCRRT_DA']))
+plt.title('Number of Expansions')
 plt.show()
