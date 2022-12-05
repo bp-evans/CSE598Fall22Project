@@ -47,8 +47,8 @@ print("The BCRRT success rate is:", round((successesBCRRT / rowBCRRTCount), 2))
 successesIMGBCRRT_SA = dfIMGBCRRT_SA['success'].value_counts()[True]
 print('Count of True Values in IMGBCRRT_SA:', successesIMGBCRRT_SA)
 
-failuresIMGBCRRT_SA = dfIMGBCRRT_SA['success'].value_counts()[False]
-print('Count of False Values in IMGBCRRT_SA:', failuresIMGBCRRT_SA)
+#failuresIMGBCRRT_SA = dfIMGBCRRT_SA['success'].value_counts()[False]
+#print('Count of False Values in IMGBCRRT_SA:', failuresIMGBCRRT_SA)
 
 print("The IMGBCRRT_SA success rate is:", round((successesIMGBCRRT_SA / rowIMGBCRRT_SACount), 2))
 
@@ -93,7 +93,9 @@ print("IMGBCRRT_DA Time - Mean: "+str(timeDiffIMGBCRRT_DA.mean())+" Std. Dev: "+
 ################################################################################
 # Create Box Plot of Time Data
 sns.boxplot(data = [timeDiffBCRRT,timeDiffIMGBCRRT_SA,timeDiffIMGBCRRT_SDO,timeDiffIMGBCRRT_DA]).set(xlabel="Algorithm", ylabel="Time to Terminal")
+#ax = plt.axes()
 plt.title('BCRRT vs IMGBCRRT_SA vs IMGBCRRT_SDO vs IMGBCRRT_DA: Time to Goal')
+#ax.set_xticklabels(["BCRRT","IMGBCRRT_SA","IMGBCRRT_SDO","IMGBCRRT_DA"])
 plt.show()
 
 ####################################################################################
@@ -116,5 +118,7 @@ print("IMGBCRRT_DA Expansion - Mean: "+str(expansionDataIMGBCRRT_DA.mean())+" St
 #############################################################
 # Create Box Plot of Expansion Data
 sns.boxplot(data = [expansionDataBCRRT,expansionDataIMGBCRRT_SA,expansionDataIMGBCRRT_SDO,expansionDataIMGBCRRT_DA]).set(xlabel="Algorithm", ylabel="Expansions")
+#ax = plt.axes()
 plt.title('BCRRT vs IMGBCRRT_SA vs IMGBCRRT_SDO vs IMGBCRRT_DA: Expansions')
+#ax.set_xticklabels(["BCRRT","IMGBCRRT_SA","IMGBCRRT_SDO","IMGBCRRT_DA"])
 plt.show()
