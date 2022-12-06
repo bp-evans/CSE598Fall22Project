@@ -2,10 +2,13 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
 \HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
 \global\let\oldnewlabel\newlabel
 \gdef\newlabel#1#2{\newlabelxx{#1}#2}
 \gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
 \AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
 \let\newlabel\oldnewlabel
 \fi}
 \fi}
@@ -40,16 +43,23 @@
 \@writefile{toc}{\contentsline {section}{\numberline {8}Experiment Results}{3}{section.8}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{../sources.bib}
+\bibcite{Chang}{{1}{}{{}}{{}}}
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Results from BCRRT Algorithm}}{4}{table.3}\protected@file@percent }
 \newlabel{BCRRT Results}{{3}{4}{Results from BCRRT Algorithm}{table.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Results from IMGBCRRT SA Algorithm}}{4}{table.4}\protected@file@percent }
 \newlabel{IMGBCRRT SA Results}{{4}{4}{Results from IMGBCRRT SA Algorithm}{table.4}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {9}Future Work}{4}{section.9}\protected@file@percent }
+\bibcite{Steven}{{2}{}{{}}{{}}}
+\bibcite{9164659}{{3}{}{{}}{{}}}
+\bibcite{Majeed}{{4}{}{{}}{{}}}
+\bibcite{Perez}{{5}{}{{}}{{}}}
+\bibcite{Zuo}{{6}{}{{}}{{}}}
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Results from IMGBCRRT SDO Algorithm}}{5}{table.5}\protected@file@percent }
 \newlabel{IMGBCRRT SDO Results}{{5}{5}{Results from IMGBCRRT SDO Algorithm}{table.5}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Results from IMGBCRRT DA Algorithm}}{5}{table.6}\protected@file@percent }
 \newlabel{IMGBCRRT DA Results}{{6}{5}{Results from IMGBCRRT DA Algorithm}{table.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {10}Appendix A: Supplementary Material}{5}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Supplementary Material}{5}{appendix.A}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Metrics from RRT Algorithm}}{5}{table.7}\protected@file@percent }
 \newlabel{RRT Metrics}{{7}{5}{Metrics from RRT Algorithm}{table.7}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Time to reach goal}}{6}{figure.1}\protected@file@percent }
