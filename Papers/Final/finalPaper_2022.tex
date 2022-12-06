@@ -108,87 +108,47 @@ Both papers propose learning algorithms that use sampling-based costmap planners
 
 \section{Problem Domain}
 
-The problem domain consists of 2D pygame environment which contains obstacles that create a maze that an agent must navigate to reach a goal location. 
-The background of this environment is black, the obstacles are blue, the agent is red, and the goal is green to enhance contrast. The start location, goal location, and obstacles can either be static or dynamic across instances of the game depending on user arguments.
+Currently, the problem domain consists primarily of 2D pygame environment which contains static obstacles that create a maze that the agent must navigate. The background of this environment is black, the obstacles and agent blue, and the goal green to add needed constrast for the visual classifier. Currently, the domain can consist of both static and domain obstacles, starts, and goals based on user arguments when running the agent. 
 
-% TODO: Reword the followings, add description of discrete action space
 For our problem the agent is creating a path to navigate from start to goal. In order to do this, our agent uses a variety RRT algorithms.
 
 Out agent is tested in a both static and dynamic 500x800 pixel environments using either basic RRT, BCRRT, or Image BCRRT. BCRRT is our baseline, and Image BCRRT is our visual classifier assisted BCRRT. For the Image BCRRT the input to the agent is a 2D image of the environment with the action the agent is taking in that state.
 
 \section{Learning Baseline}
+To create a baseline for our CARRT, we require a demonstration. As we planned to use static obstacle space, we ignored the location of obstacles in creating the demo.
+We used pygame to set up our environment and demonstrations were collected by us playing the game using WASD keys. Each demonstration is a trajectory with (state, action) pairs. Each state is represented as (the current position of the agent, goal position) and action is represented as ENUM of WASD keys.
+We used a simple MLP model as a prediction/action generator, a summary of the model is given in Table 1.
+For the next phase of the project, we'll keep this model as a baseline and expand it to accommodate dynamic world state space.
 
-In this paper we will show results relative to some baseline. The baseline we decided to work off of is a trained implementation of the CA-RRT algorithm \cite{Zuo} that we call BCRRT. 
-BCRRT works by first rolling out a trained Behavior Cloning policy to generate a path. 
-This path is then used to seed a standard RRT algorithm. The idea is that the path rolled out by the BC model will guide the RRT expansion. 
-
-To keep complexity low for the baseline, we used a environment where the goal state and the obstacles are kept static. The state space is the agent's and the goal's current coordinates in the maze environment.
-Table \ref{bcrrt model summary} shows the neural network model used for the BCRRT algorithm. This model was trained with around 20,000 demonstrations. 
-
-\begin{table}[h]
-\parbox{.45\linewidth}{
-  \caption{BCRRT Model Summary}
-  \label{bcrrt model summary}
-  \centering
-  \begin{tabular}{lll}
-    \cmidrule(r){1-3}
-   Layer (Type)          & Output Shape       &Parameter count\\
-    \midrule
-    Linear-1 & [-1, 8] & 40\\
-    ReLU-2 & [-1, 8] & 0\\
-    BatchNorm1d-3 & [-1, 8] & 16\\
-    Linear-4 & [-1, 8] & 72\\
-    ReLU-5 & [-1, 8] & 0\\
-    BatchNorm1d-6 & [-1, 8] & 16\\
-    Linear-7 & [-1, 4] & 36\\
-    ReLU-8 & [-1, 4] & 0\\
-    BatchNorm1d-9 & [-1, 4] & 8\\
-    Linear-10 & [-1, 4] & 20\\
-    ReLU-11 & [-1, 4] & 0\\
-    BatchNorm1d-12 & [-1, 4] & 8\\
-    \bottomrule
-    \cmidrule(r){1-2}
-        Total Parameters & & 216\\
-    \bottomrule
-  \end{tabular}}
-  \hfill
-\parbox{.45\linewidth}{
-\caption{IMGBCRRT Model Summary}
-	\label{imgbcrrt model summary}
-	\centering
-	\begin{tabular}{lll}
-		\cmidrule(r){1-2}
-		Layer (Type) & Output Shape\\
-		\midrule
-		Resize & [3,256,256]\\
-		ConvertImageToFloat & [3,256,256]\\
-		Normalize & [3,256,256]\\
-		\midrule
-		Conv2d & [64,127,127]\\
-		ReLU & --\\
-		MaxPool2d & [64,63,63]\\
-		Conv2d & [128,31,31]\\
-		ReLU & --\\
-		MaxPool2d & [128,15,15]\\
-		InstanceNorm2d & --\\
-		\midrule
-		Flatten & 28800\\
-		Linear & 64\\
-		ReLU & 64\\
-		Linear & 4\\
-		ReLU & 4\\
-		\bottomrule
-	\end{tabular}
-	}
-\end{table}
-
-\section{IMGBCRRT - Novel Model}
-
-We now introduce a novel model called IMGBCRRT that works off of the same concepts as BCRRT but where the state space is a 2D image of the entire game field (as opposed to just the coordinates of objects). 
-Table \ref{imgbcrrt model summary} shows the structure of the IMGBCRRT Convolutional Neural Network. It first performs some preprocessing on an input image that normalizes and scales all images down to size 256x256. Then the image is passed through 2 convolutional and pooling layers. Finally the input is flattened and passed through 2 fully connected layers to obtain 4 outputs that correspond to the 4 potential actions.
-
-We trained this model under 3 different scenarios: static start/goal/obstacles, static start/goal + dynamic obstacles, static goal + dynamic start/obstacles. Each training used an autogenerated dataset of about 10,000 labeled images. 
-To further validate our following results, we also trained a dynamic start/obstacles + static goal model twice more on datasets of size 20,000 and 100,000. The classification accuracy when evaluating every model after training was always around 48\%.
+% DO WE STILL NEED THIS TABLE?
+%\begin{table}[h]
+%  \caption{Behavior cloning MLP model summary}
+%  \label{model summary}
+%  \centering
+%  \begin{tabular}{lll}
+%    \cmidrule(r){1-3}
+%   Layer (Type)          & Output Shape       &Parameter count\\
+%    \midrule
+%    Linear-1 & [-1, 8] & 40\\
+%    ReLU-2 & [-1, 8] & 0\\
+%    BatchNorm1d-3 & [-1, 8] & 16\\
+%    Linear-4 & [-1, 8] & 72\\
+%    ReLU-5 & [-1, 8] & 0\\
+%    BatchNorm1d-6 & [-1, 8] & 16\\
+%    Linear-7 & [-1, 4] & 36\\
+%    ReLU-8 & [-1, 4] & 0\\
+%    BatchNorm1d-9 & [-1, 4] & 8\\
+%    Linear-10 & [-1, 4] & 20\\
+%    ReLU-11 & [-1, 4] & 0\\
+%    BatchNorm1d-12 & [-1, 4] & 8\\
+%    \bottomrule
+%    \cmidrule(r){1-2}
+%        Total params & 216\\
+%        Trainable params & 216\\
+%        Non-trainable params & 0\\
+%    \bottomrule
+%  \end{tabular}
+%\end{table}
 
 % Detail experiment metrics BW
 \section{Experiment Metrics}
@@ -314,10 +274,17 @@ In regard to the results of the direct comparison of BCRRT and IMGBCRRT SA, we c
 
 \vspace{1cm}
 \section{Future Work}
-Experimentations - 
+We plan to build on our baseline and accomplish these listed tasks. 
 \begin{itemize}
-  \item Our system can be summarised as a model-free learning AI (where its trying to learn the domain to help RRT expansion). However, we feel the learning part is not agnostic because we have design it based on the problem domain.
-  \item It would be interesting to see if embedding the action value into few training samples for CNN and trying to bias the network will help in getting better results. This is possible because our action/labels can be easily indicated by image/input.
+  \item Creating and training a visual classifier to learn a cost function in the RRT.
+  \begin{itemize}
+    \item Collecting demonstration for variable goal and obstacle environment.
+    \item Training a visual classifier to recognize a “goal region” in a 2D image.
+    \item Use the visual classifier as a cost function to aid in guiding the agent’s expansions towards the goal faster.
+  \end{itemize}
+  \item Perform testing on the Visual-RRT against the CA-RRT behavior cloning baseline.
+  \item Prepare data visualizations of the data collected in the comparison testing.
+  \item Perform student’s t-test on the two algorithm results.
 \end{itemize}
 
 
