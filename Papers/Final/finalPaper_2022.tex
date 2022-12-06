@@ -150,24 +150,25 @@ For the next phase of the project, we'll keep this model as a baseline and expan
 %  \end{tabular}
 %\end{table}
 
+% Detail experiment metrics BW
 \section{Experiment Metrics}
 
-The metrics being evaluated in the experioment include the following:
+The metrics being evaluated in the experiment include the following:
 \begin{itemize}
-	\item{Success Rate: The percentage of times out of n samples that the agent successfully reaches the goal.}
-	\item{Time: The time taken from the start of RRT to the terminal node or condition i.e. when the limit of 1000 expansions is met.}
+	\item{Success Rate: The percentage of successes that the agent successfully reaches the goal.}
+	\item{Time: The time taken by the agent from the start of RRT to the terminal node or condition i.e. when the limit of 1000 expansions is met.}
 	\item{Number of Expansions: The number of nodes in the RRT graph at termination.}
 \end{itemize}
 
 \section{Experiment Results}
-% Detail result findings
-As our goal was to develop a RRT algorithm that uses a visual classifier to learn a cost function. The baseline used for this paper required a learning-based approach, as such, we decided to utilize CARRT as our baseline rather than a standard RRT. The above metrics were used for an initial evaluatation of both our baseline algorithm, which was a version of CA-RRT (BCRRT), and a standard RRT algorithm. In order to ensure the baseline BCRRT was performing correctly, the metric results must reflect an improvement of BCRRT over the strandard RRT. The initial baseline results for BCRRT can be seen in Table \ref{BCRRT Results}, while the results for RRT are shown in Appendix A: Table \ref{RRT Metrics}. The experiment does not directly compare RRT with our proposed IMGBCRRT algorithm, as we are solely focusing on a learning-based approach. After training numerous models of IMGBCRRT, we proceeded with the experiment phase of this paper, this included the testing of our proposed algorithm. We performed testing on three different configurations of IMGBCRRT. The first configuration consisted of a static enviroment with static obstacles and static start/goal locations, which is labeled as IMGBCRRT SA in the tabular results. The second configuration consisted of a mixed enviroment with dynamic obstacles and static start/goal locations, which is labeled as IMGBCRRT SDO in the tabular results. The last configuration consisted of a dynamic enviroment with dynamic obstacles and dynamic start/goal locations, which is labeled as IMGBCRRT DA in the following tabular results. To properly evaluate the performance of IMGBCRRT, the experiment consisted of testing the three configurations of IMGBCRRT against the baseline BCRRT. The BCRRT configuration consisted of a static enviroment with static obstacles and static start/goal locations. The experiment was done over five iterations with the results of the metrics being collected during each iteration of the test. The mean and standard deviation of the metric results are provided in each results table as well as a box and whisker plot. 
+% Detail result findings BW
+As our goal was to develop a RRT algorithm that uses a visual classifier to learn a cost function. The baseline used for this paper required a learning-based approach, as such, we decided to utilize CARRT as our baseline rather than a standard RRT. The above metrics were used for an initial evaluatation of both our baseline algorithm, which was a version of CA-RRT (BCRRT), and a standard RRT algorithm. In order to ensure the baseline BCRRT was performing correctly, the metric results must reflect an improvement of BCRRT over the strandard RRT. The initial baseline results for BCRRT can be seen in Table \ref{BCRRT Results}, while the results for RRT are shown in Appendix A: Table \ref{RRT Metrics}. The experiment does not directly compare RRT with our proposed IMGBCRRT algorithm, as we are solely focusing on a learning-based approach. After training numerous models of IMGBCRRT, we proceeded with the experiment phase of this paper, this included the testing of our proposed algorithm. We performed testing on three different configurations of IMGBCRRT. The first configuration consisted of a static enviroment with static obstacles and static start/goal locations, which is labeled as IMGBCRRT SA, and is shown in Table \ref{IMGBCRRT SA Results}. The second configuration consisted of a mixed enviroment with dynamic obstacles and static start/goal locations, which is labeled as IMGBCRRT SDO, and is shown in Table \ref{IMGBCRRT SDO Results}. The last configuration consisted of a dynamic enviroment with dynamic obstacles and dynamic start/goal locations, which is labeled as IMGBCRRT DA, and is shown in Table \ref{IMGBCRRT DA Results}. 
 
-The results of the baseline BCRRT compared to RRT reflect an expected outcome of  BCRRT performing better overall than the RRT algorithm. The RRTprovides a mean success rate of .79, a mean time of 3.39 s $\pm$ 1.20 s, and a mean expansions of 744.48 s $\pm$ 208.45 s. While the BCRRT provides a mean success rate of .90, a mean time of 1.94 s $\pm$ 1.73 s, and a mean expansions of 436.48 s $\pm$ 375.33 s. When comparing the %%%HERE BW
+To properly evaluate the performance of IMGBCRRT, the experiment consisted of testing the three configurations of IMGBCRRT against the baseline BCRRT. The BCRRT configuration consisted of a static enviroment with static obstacles and static start/goal locations. The experiment was done over five iterations with the results of the metrics being collected during each iteration of the test. The mean and standard deviation of the metric results are provided in each results table as well as a box and whisker plot. The results of the baseline BCRRT compared to RRT reflect an expected outcome of  BCRRT performing better overall than the RRT algorithm. The RRTprovides a mean success rate of .79, a mean time of 3.39 s $\pm$ 1.20 s, and a mean expansions of 744.48 $\pm$ 208.45. While the BCRRT provides a mean success rate of .90, a mean time of 1.94 s $\pm$ 1.73 s, and a mean number of expansions of 436.48 $\pm$ 375.33.
 
-%  Finish Results
+In regard to the results of the direct comparison of BCRRT and IMGBCRRT SA, we can see a significant improvement on all metrics. The results show a significant reduction of time with IMGBCRRT SA with a mean time of .92 s $\pm$ .31 s and a mean number of expansions of 22.09 $\pm$ 84.50. The evaluation of the two remaining configurations of IMGBCRRT in comparison to IMGBCRRT SA reflect an increase of mean time and number of expansions when dynamic obstacles are used though the success rate remains at ~.90. We can see from the results that the standard deviation (SD) seems rather large, this may be due to the small number of iterations that were used in testing, this can be addressed in future work by performing testing with a larger number of iterations. Due to the large SD values, we further analyzed the data by calculating the coefficient of variation (CV) for each of the results to determine the level of dispersion around the mean, shown in Appendix A: Table \ref{CV}. Despite the large standard deviations seen in the results, we see a reasonable dispersion of mean time and number of expansions (with the exception of IMGBCRRT SA). 
 
-
+%  Updated and Correct Tables BW
 \begin{table}[h]
   \caption{Results from BCRRT Algorithm}
   \label{BCRRT Results}
@@ -181,6 +182,8 @@ The results of the baseline BCRRT compared to RRT reflect an expected outcome of
     3 & .92 & 1.6560 & 1.4974 & 439.7563 & 375.8521 \\
     4 & .90 & 2.0366 & 1.8273 & 428.4387 & 376.2023 \\
     5 & .89 & 2.0287 & 1.6985 & 431.4369 & 373.4285 \\
+ \midrule
+  AVG & .902 & 1.9428 & 1.7302 & 436.4819 & 375.3263 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -193,11 +196,13 @@ The results of the baseline BCRRT compared to RRT reflect an expected outcome of
     \cmidrule(r){1-6}
    Iteration & Success Rate & Mean Time(s) & Std. Dev Time & Mean Expansions & Std. Dev Expansions\\
     \midrule
-    1 & .89 & 1.9586 & 1.8819 & 440.6875 & 378.6503 \\
-    2 & .91 & 2.0340 & 1.7459 & 442.09 & 372.4981 \\
-    3 & .92 & 1.6560 & 1.4974 & 439.7563 & 375.8521 \\
-    4 & .90 & 2.0366 & 1.8273 & 428.4387 & 376.2023 \\
-    5 & .89 & 2.0287 & 1.6985 & 431.4369 & 373.4285 \\
+    1 & 1.0 & .8916 & .2051 & 19.8276 & 66.0555 \\
+    2 & 1.0 & .8958 & .1310 & 18.4576 & 63.0348 \\
+    3 & 1.0 & .8971 & .1238 & 16.7414 & 54.4690 \\
+    4 & 1.0 & .9432 & .4144 & 25.1466 & 101.5863 \\
+    5 & .98 & .9743 & .6745 & 30.3017 & 137.3698 \\
+ \midrule
+  AVG & .996 & .9204 & .3097 & 22.0950 & 84.5031 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -210,11 +215,13 @@ The results of the baseline BCRRT compared to RRT reflect an expected outcome of
     \cmidrule(r){1-6}
    Iteration & Success Rate & Mean Time(s) & Std. Dev Time & Mean Expansions & Std. Dev Expansions\\
     \midrule
-    1 & .89 & 1.9586 & 1.8819 & 440.6875 & 378.6503 \\
-    2 & .91 & 2.0340 & 1.7459 & 442.09 & 372.4981 \\
-    3 & .92 & 1.6560 & 1.4974 & 439.7563 & 375.8521 \\
-    4 & .90 & 2.0366 & 1.8273 & 428.4387 & 376.2023 \\
-    5 & .89 & 2.0287 & 1.6985 & 431.4369 & 373.4285 \\
+    1 & 1.0 & 1.4602 & .8591 & 196.7556 & 194.4713 \\
+    2 & .92 & 2.6790 & 1.8534 & 374.2079 & 313.2433 \\
+    3 & .73 & 4.3425 & 1.8081 & 696.5349 & 293.5065 \\
+    4 & .98 & 1.8653 & 1.6107 & 208.3444 & 290.2712 \\
+    5 & .98 & 1.6502 & 1.0182 & 222.1038 & 249.5101 \\
+ \midrule
+  AVG & .922 & 2.3994 & 1.4299 & 339.5893 & 268.2005 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -227,11 +234,13 @@ The results of the baseline BCRRT compared to RRT reflect an expected outcome of
     \cmidrule(r){1-6}
    Iteration & Success Rate & Mean Time(s) & Std. Dev Time & Mean Expansions & Std. Dev Expansions\\
     \midrule
-    1 & .89 & 1.9586 & 1.8819 & 440.6875 & 378.6503 \\
-    2 & .91 & 2.0340 & 1.7459 & 442.09 & 372.4981 \\
-    3 & .92 & 1.6560 & 1.4974 & 439.7563 & 375.8521 \\
-    4 & .90 & 2.0366 & 1.8273 & 428.4387 & 376.2023 \\
-    5 & .89 & 2.0287 & 1.6985 & 431.4369 & 373.4285 \\
+    1 & .99 & 2.2373 & .7730 & 283.5508 & 181.8569 \\
+    2 & .94 & 2.7234 & 1.1715 & 564.7465 & 246.4456 \\
+    3 & .81 & 2.2974 & 1.4021 & 360.9149 & 378.8530 \\
+    4 & .91 & 1.4934 & 1.0860 & 257.0303 & 303.3063 \\
+    5 & .86 & 3.6526 & 1.2020 & 637.5954 & 264.6904 \\
+ \midrule
+  AVG & .9020 & 2.4808 & 1.1269 & 420.7676 & 275.0304 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -242,25 +251,25 @@ The results of the baseline BCRRT compared to RRT reflect an expected outcome of
 	\centering
 \begin{minipage}{.5\textwidth}
 \centering
-	%\includegraphics[width=.9\linewidth]{BoxWhiskerTime.png}
-        \caption{Time taken to reach Goal}
+	\includegraphics[width=.9\linewidth]{TTG1.png}
+        \caption{Time to reach goal}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 \centering
-	%\includegraphics[width=.9\linewidth]{BoxWhiskerExpansions.png}
-        \caption{Number of nodes expanded.}
+	\includegraphics[width=.9\linewidth]{Expans1.png}
+        \caption{Number of nodes expanded}
 \end{minipage}
 
 \end{figure}
 
 \begin{figure}[h]
 	%\centerline{\includegraphics[scale=0.40]{RRT.png}}
-        \caption{Expansion based solely on RRT.}
+        \caption{Expansion based solely on RRT}
 \end{figure}
 
 \begin{figure}[h]
 	%\centerline{\includegraphics[scale=0.45]{BCRRT.png}}
-        \caption{Expansion after behavior cloned roll-out.}
+        \caption{Expansion after behavior cloned roll-out}
 \end{figure}
 
 \vspace{1cm}
@@ -298,10 +307,28 @@ We plan to build on our baseline and accomplish these listed tasks.
     3 & .79 & 2.9090 & 1.0498 & 751.5603 & 209.2586 \\
     4 & .77 & 3.4672 & 1.2880 & 734.6838 & 213.4561 \\
     5 & .79 & 3.3586 & 1.2298 & 738.7589 & 205.6531 \\
+ \midrule
+  AVG & .79 & 3.3878 & 1.1986 & 744.4778 & 208.4471 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
+\begin{table}[h]
+  \caption{Coefficient of Variation (CV)}
+  \label{CV}
+  \centering
+  \begin{tabular}{llllll}
+    \cmidrule(r){1-3}
+   Algorithm  & CV Time(s) &  CV Expansions\\
+    \midrule
+    RRT & 0.3544 & .2800\\
+    BCRRT & .8916 & .8600\\
+    IMGBCRRT SA & .3292 & 3.7147\\
+     IMGBCRRT SDO & .6354 & .9527\\
+     IMGBCRRT DA  & .4884 & .7445\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
