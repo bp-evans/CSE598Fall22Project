@@ -305,17 +305,10 @@ The results of the baseline BCRRT compared to RRT reflect an expected outcome of
 
 \vspace{1cm}
 \section{Future Work}
-We plan to build on our baseline and accomplish these listed tasks. 
+Experimentations - 
 \begin{itemize}
-  \item Creating and training a visual classifier to learn a cost function in the RRT.
-  \begin{itemize}
-    \item Collecting demonstration for variable goal and obstacle environment.
-    \item Training a visual classifier to recognize a “goal region” in a 2D image.
-    \item Use the visual classifier as a cost function to aid in guiding the agent’s expansions towards the goal faster.
-  \end{itemize}
-  \item Perform testing on the Visual-RRT against the CA-RRT behavior cloning baseline.
-  \item Prepare data visualizations of the data collected in the comparison testing.
-  \item Perform student’s t-test on the two algorithm results.
+  \item Our system can be summarised as a model-free learning AI (where its trying to learn the domain to help RRT expansion). However, we feel the learning part is not agnostic because we have design it based on the problem domain.
+  \item It would be interesting to see if embedding the action value into few training samples for CNN and trying to bias the network will help in getting better results. This is possible because our action/labels can be easily indicated by image/input.
 \end{itemize}
 
 
