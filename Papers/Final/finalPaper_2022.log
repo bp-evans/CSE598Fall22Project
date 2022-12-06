@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2022.10.20)  5 DEC 2022 20:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.10) (preloaded format=pdflatex 2022.10.20)  5 DEC 2022 20:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -559,48 +559,52 @@ Package natbib Warning: Citation `Majeed' on page 2 undefined on input line 106
 Package natbib Warning: Citation `Majeed' on page 2 undefined on input line 106
 .
 
+
+Package natbib Warning: Citation `Zuo' on page 2 undefined on input line 121.
+
+
+Overfull \hbox (46.9514pt too wide) in paragraph at lines 153--153
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[2]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
-58.
-(C:\Users\braed\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
+98.
+ (C:\Users\braed\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-Underfull \vbox (badness 2495) has occurred while \output is active []
-
- [2]
-Overfull \hbox (31.41125pt too wide) in paragraph at lines 176--189
+[3]
+Overfull \hbox (31.41125pt too wide) in paragraph at lines 216--229
  [][] 
  []
 
 
-Overfull \hbox (31.41125pt too wide) in paragraph at lines 195--208
+Overfull \hbox (31.41125pt too wide) in paragraph at lines 235--248
  [][] 
  []
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Overfull \hbox (31.41125pt too wide) in paragraph at lines 214--227
+Overfull \hbox (31.41125pt too wide) in paragraph at lines 254--267
  [][] 
  []
 
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Overfull \hbox (31.41125pt too wide) in paragraph at lines 233--246
+Overfull \hbox (31.41125pt too wide) in paragraph at lines 273--286
  [][] 
  []
 
-<TTG1.png, id=57, 462.528pt x 346.896pt>
+<TTG1.png, id=74, 462.528pt x 346.896pt>
 File: TTG1.png Graphic file (type png)
 <use TTG1.png>
-Package pdftex.def Info: TTG1.png  used on input line 254.
+Package pdftex.def Info: TTG1.png  used on input line 294.
 (pdftex.def)             Requested size: 178.86702pt x 134.15085pt.
-<Expans1.png, id=59, 462.528pt x 346.896pt>
+<Expans1.png, id=76, 462.528pt x 346.896pt>
 File: Expans1.png Graphic file (type png)
 <use Expans1.png>
-Package pdftex.def Info: Expans1.png  used on input line 259.
+Package pdftex.def Info: Expans1.png  used on input line 299.
 (pdftex.def)             Requested size: 178.86702pt x 134.15085pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -612,17 +616,14 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1221) has occurred while \output is active []
 
- [3]
+ [4]
 No file finalPaper_2022.bbl.
 
-Overfull \hbox (31.41125pt too wide) in paragraph at lines 301--314
+Overfull \hbox (31.41125pt too wide) in paragraph at lines 334--347
  [][] 
  []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -630,27 +631,27 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 Package natbib Warning: There were undefined citations.
 
-[4] [5 <./TTG1.png> <./Expans1.png>] (finalPaper_2022.aux)
+[5 <./TTG1.png> <./Expans1.png>] [6] (finalPaper_2022.aux)
 Package rerunfilecheck Info: File `finalPaper_2022.out' has not changed.
-(rerunfilecheck)             Checksum: 2AE974C3DB7C03E9F5A462B04BA95C11;1182.
+(rerunfilecheck)             Checksum: 4CF2BE7AC2C98A42FC05F7F3C3C3D0FC;1346.
  ) 
 Here is how much of TeX's memory you used:
- 12526 strings out of 475385
- 202734 string characters out of 2776906
- 594306 words of memory out of 3000000
- 33546 multiletter control sequences out of 15000+600000
- 494723 words of font info for 144 fonts, out of 8000000 for 9000
+ 12536 strings out of 475385
+ 202848 string characters out of 2776906
+ 594390 words of memory out of 3000000
+ 33549 multiletter control sequences out of 15000+600000
+ 494850 words of font info for 146 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 72i,8n,77p,1698b,492s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 72i,10n,77p,1698b,490s stack positions out of 10000i,1000n,20000p,200000b,80000s
 {C:/Users/braed/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <C
 :\Users\braed\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.
 pk><C:/Users/braed/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
 /cmsy10.pfb><C:/Users/braed/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times
 /utmb8a.pfb><C:/Users/braed/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times
 /utmr8a.pfb>
-Output written on finalPaper_2022.pdf (5 pages, 102294 bytes).
+Output written on finalPaper_2022.pdf (6 pages, 106556 bytes).
 PDF statistics:
- 129 PDF objects out of 1000 (max. 8388607)
- 25 named destinations out of 1000 (max. 500000)
- 28755 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 141 PDF objects out of 1000 (max. 8388607)
+ 29 named destinations out of 1000 (max. 500000)
+ 28763 words of extra memory for PDF output out of 29859 (max. 10000000)
 
